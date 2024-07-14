@@ -20,7 +20,7 @@ class Home extends React.Component {
     let inactive = await AsyncStorage.getItem('inactive');
     this.setState({deactivated: inactive});
 
-    this.setBatteryLevel();
+    if (!inactive) this.setBatteryLevel();
   };
 
   setBatteryLevel = () => {
@@ -35,24 +35,30 @@ class Home extends React.Component {
 
   toggle_options = () => this.options?.toggle();
 
-  toggle_activation = () => {
+  toggle_activation = async () => {
     let {deactivated, presetBatteryLevel} = this.state;
     if (deactivated) {
       BatteryModule.startBatteryService(presetBatteryLevel);
+      await AsyncStorage.removeItem('inactive');
     } else {
       BatteryModule.deactivateBatteryService();
+      await AsyncStorage.setItem('inactive', 'true');
     }
+    deactivated = !deactivated;
+    this.setState({deactivated});
   };
 
   maxs = [80, 90, 100];
 
   render() {
-    let {presetBatteryLevel} = this.state;
+    let {presetBatteryLevel, deactivated} = this.state;
 
     return (
       <Bg_view style={{padding: wp(5), flex: 1}}>
         <Bg_view style={{justifyContent: 'space-between'}} horizontal>
-          <Fr_text>Welcome</Fr_text>
+          <Fr_text bold="900" size={wp(5)}>
+            Welcome
+          </Fr_text>
           <TouchableNativeFeedback onPress={this.toggle_options}>
             <Feather name="menu" size={wp(7.5)} />
           </TouchableNativeFeedback>
@@ -100,14 +106,22 @@ class Home extends React.Component {
                 style={{
                   height: hp(40),
                   width: hp(40),
-                  marginTop: hp(4),
-                  backgroundColor: '#db8330',
+                  marginTop: hp(8),
+                  backgroundColor: deactivated ? '#db8330' : '#2ab659',
                   borderRadius: hp(20),
                   justifyContent: 'center',
+                  padding: wp(8),
+                  textAlign: 'center',
                   alignItems: 'center',
                 }}>
-                <Fr_text style={{fontWeight: '900', fontSize: wp(6.5)}}>
-                  Activate Mode
+                <Fr_text
+                  capitalise
+                  style={{
+                    fontWeight: '900',
+                    textAlign: 'center',
+                    fontSize: wp(8),
+                  }}>
+                  {deactivated ? 'Activate Mode' : 'Deactivate Mode'}
                 </Fr_text>
               </Bg_view>
             </View>
