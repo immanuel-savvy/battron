@@ -9,18 +9,12 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      presetBatteryLevel: 20,
+      presetBatteryLevel: 80,
     };
   }
 
   componentDidMount() {
     this.setBatteryLevel();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.presetBatteryLevel !== this.state.presetBatteryLevel) {
-      this.setBatteryLevel();
-    }
   }
 
   setBatteryLevel = () => {

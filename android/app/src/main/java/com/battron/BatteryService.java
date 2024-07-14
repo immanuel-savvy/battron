@@ -11,8 +11,8 @@ import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.media.RingtoneManager;
 import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;
@@ -23,6 +23,10 @@ public class BatteryService extends Service {
     private static final String CHANNEL_ID = "BatteryServiceChannel";
     private Handler handler;
     private int presetBatteryLevel = 20;
+    private boolean isAlarmPlaying = false;
+    private boolean ever_played = false;
+    private Ringtone ringtone;
+    private Handler alarmHandler;
 
     @Nullable
     @Override
@@ -39,6 +43,12 @@ public class BatteryService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        String action = intent.getAction();
+        if (action != null && action.equals("DEACTIVATE")) {
+            deactivateMonitoring();
+            return START_NOT_STICKY;
+        }
+        
         presetBatteryLevel = intent.getIntExtra("presetBatteryLevel", 20);
         startForeground(1, getNotification());
         startBatteryMonitoring();
@@ -67,10 +77,26 @@ public class BatteryService extends Service {
                 int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
                 float batteryPct = level * 100 / (float) scale;
 
-                if (batteryPct >= presetBatteryLevel) {
-                    triggerAlarm();
-                    sendNotification();
+                if (!ever_played){
+                     if (batteryPct >= presetBatteryLevel) {
+                        if (!isAlarmPlaying) {
+                            triggerAlarm();
+                            sendNotification();
+                            isAlarmPlaying = true;
+                            ever_played = true;
+                        }
+                    } else {
+                        if (isAlarmPlaying) {
+                            stopAlarm();
+                            isAlarmPlaying = false;
+                        }
+                    }
+                } else {
+                    if (batteryPct < presetBatteryLevel){
+                        ever_played = false;
+                    }
                 }
+               
 
                 handler.postDelayed(this, 60000); // Check every minute
             }
@@ -79,8 +105,24 @@ public class BatteryService extends Service {
 
     private void triggerAlarm() {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         ringtone.play();
+
+        // Stop the alarm after 20 seconds
+        alarmHandler = new Handler(Looper.getMainLooper());
+        alarmHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                stopAlarm();
+            }
+        }, 20000); // 20 seconds
+    }
+
+    private void stopAlarm() {
+        if (ringtone != null && ringtone.isPlaying()) {
+            ringtone.stop();
+        }
+        isAlarmPlaying = false;
     }
 
     private void sendNotification() {
@@ -99,7 +141,17 @@ public class BatteryService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        deactivateMonitoring();
+    }
+
+    private void deactivateMonitoring() {
         handler.removeCallbacksAndMessages(null);
+        if (isAlarmPlaying) {
+            stopAlarm();
+        }
+        stopForeground(true);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     private void createNotificationChannel() {

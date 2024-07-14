@@ -32,4 +32,11 @@ public class BatteryModule extends ReactContextBaseJavaModule {
         serviceIntent.putExtra("presetBatteryLevel", level);
         reactContext.startForegroundService(serviceIntent);
     }
+
+    @ReactMethod
+    public void deactivateBatteryService() {
+        Intent serviceIntent = new Intent(reactContext, BatteryService.class);
+        serviceIntent.setAction("DEACTIVATE");
+        reactContext.startService(serviceIntent);
+    }
 }
