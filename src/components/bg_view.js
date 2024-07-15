@@ -22,7 +22,7 @@ class Bg_view extends React.Component {
     if (!style) style = new Object();
     if (shadowed) {
       style.shadowColor = '#000';
-      style.elevation = 5;
+      style.elevation = typeof shadowed === 'number' ? shadowed : 5;
     }
     if (flex) style.flex = typeof flex === 'boolean' ? 1 : flex;
     if (accent) style.backgroundColor = '#006dbb';

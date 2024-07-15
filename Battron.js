@@ -9,6 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Splash from './src/screens/Splash';
 import {App_data} from './Contexts';
 import Home from './src/screens/Home';
+import About_us from './src/screens/About_us';
+import Subscribe from './src/screens/Subscribe';
 
 const {BatteryModule} = NativeModules;
 
@@ -26,14 +28,16 @@ class App_stack_entry extends React.Component {
   render = () => {
     return (
       <App_stack.Navigator
-        initialRouteName="index"
+        initialRouteName="home"
         screenOptions={{
           headerShown: false,
           keyboardHandlingEnabled: true,
           gestureEnabled: true,
           animationEnabled: true,
         }}>
-        <App_stack.Screen name="index" component={Home} />
+        <App_stack.Screen name="home" component={Home} />
+        <App_stack.Screen name="about_us" component={About_us} />
+        <App_stack.Screen name="subscribe" component={Subscribe} />
       </App_stack.Navigator>
     );
   };

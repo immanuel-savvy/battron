@@ -21,10 +21,10 @@ class Cool_modal extends React.Component {
         isVisible={show_modal}
         backdropColor="#fff"
         deviceHeight={height}
-        onBackdropPress={this.toggle_show_modal}
+        onBackdropPress={this.toggle}
         swipeDirection={no_swipe ? null : center ? 'right' : 'down'}
-        onSwipeComplete={no_swipe ? null : this.toggle_show_modal}
-        onBackButtonPress={this.toggle_show_modal}
+        onSwipeComplete={no_swipe ? null : this.toggle}
+        onBackButtonPress={this.toggle}
         style={{
           margin: 0,
           padding: 0,
