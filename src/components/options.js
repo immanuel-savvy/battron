@@ -26,7 +26,9 @@ class Options extends React.Component {
       <Bg_view style={{padding: wp(4)}}>
         {this.options.map((op, i) => {
           return (
-            <TouchableNativeFeedback onPress={() => this.handle_option(op)}>
+            <TouchableNativeFeedback
+              key={i}
+              onPress={() => this.handle_option(op)}>
               <View>
                 <Bg_view
                   key={i}
