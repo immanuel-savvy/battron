@@ -31,14 +31,14 @@ class Header extends React.Component {
           horizontal>
           {title !== 'home' ? (
             <TouchableNativeFeedback onPress={navigation?.goBack}>
-              <Feather name="chevron-left" size={wp(6.5)} />
+              <Feather name="chevron-left" color="#000" size={wp(6.5)} />
             </TouchableNativeFeedback>
           ) : null}
           <Fr_text bold="900" size={wp(5)} capitalise>
             {title === 'home' ? 'Welcome' : title}
           </Fr_text>
           <TouchableNativeFeedback onPress={this.toggle_options}>
-            <Feather name="menu" size={wp(7.5)} />
+            <Feather name="menu" color="#000" size={wp(7.5)} />
           </TouchableNativeFeedback>
         </Bg_view>
         <Cool_modal ref={options => (this.options = options)}>
