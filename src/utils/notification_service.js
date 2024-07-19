@@ -29,8 +29,8 @@ class NotificationService {
       PushNotification.createChannel(
         {
           channelId: 'battery_stat',
-          channelName: 'Default Channel',
-          channelDescription: 'A default channel',
+          channelName: 'Battron',
+          channelDescription: 'To alert owner of device of their battery limit',
           soundName: 'default',
           importance: 4,
           vibrate: true,
@@ -42,7 +42,7 @@ class NotificationService {
 
   localNotification = message => {
     PushNotification.localNotification({
-      channelId: 'default',
+      channelId: 'battery_stat',
       largeIcon: 'ic_launcher',
       smallIcon: 'ic_notification',
       color: 'red',
@@ -53,6 +53,7 @@ class NotificationService {
       title: 'Battery Level Alert',
       message,
       playSound: true,
+      id: 1,
       soundName: 'default',
     });
 

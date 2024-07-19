@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  TouchableNativeFeedback,
-  NativeModules,
-  ScrollView,
-} from 'react-native';
+import {View, TouchableNativeFeedback, ScrollView} from 'react-native';
 import Bg_view from '../components/bg_view';
 import Fr_text from '../components/fr_text';
 import {hp, wp} from '../utils/dimensions';
@@ -14,8 +9,6 @@ import Text_btn from '../components/text_btn';
 import Header from '../components/header';
 import DeviceBattery from 'react-native-device-battery';
 import {notificationService} from '../utils/notification_service';
-
-const {MyNotificationModule} = NativeModules;
 
 class Home extends React.Component {
   constructor(props) {
@@ -29,20 +22,17 @@ class Home extends React.Component {
 
   send_notifications = () => {
     notificationService.localNotification(
-      'Battery level has reached the preset limit.',
+      `Battery level has reached the preset limit of ${this.state.preset_battery_level}%`,
     );
   };
 
   componentDidMount = async () => {
-    MyNotificationModule.showNotification(
-      'Battron',
-      'Battery Monitoring is active',
-    );
     let inactive = await AsyncStorage.getItem('inactive');
     this.setState({deactivated: inactive});
 
     this.onBatteryStateChanged = state => {
       let {preset_battery_level, charging, played, deactivated} = this.state;
+
       if (deactivated) return;
 
       if (charging !== state.charging)
@@ -59,10 +49,9 @@ class Home extends React.Component {
     };
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level'));
-    if (!isNaN(preset_level)) {
-      console.log(preset_level);
+
+    if (!isNaN(preset_level))
       this.setState({preset_battery_level: preset_level});
-    }
 
     if (!inactive) {
       DeviceBattery.addListener(this.onBatteryStateChanged);
@@ -70,12 +59,14 @@ class Home extends React.Component {
   };
 
   set_battery_level = level => {
-    this.setState({preset_battery_level: Number(level) || 80}),
-      () =>
-        AsyncStorage.setItem(
-          'preset_level',
-          this.state.preset_battery_level.toString(),
-        );
+    this.setState({preset_battery_level: Number(level) || 80}, async () => {
+      let {preset_battery_level} = this.state;
+
+      await AsyncStorage.setItem(
+        'preset_level',
+        preset_battery_level.toString(),
+      );
+    });
   };
 
   handleInputChange = text => {
@@ -209,6 +200,7 @@ class Home extends React.Component {
                       fontWeight: '900',
                       textAlign: 'center',
                       fontSize: wp(8),
+                      // color: '#fff',
                     }}>
                     {deactivated ? 'Activate Mode' : 'Deactivate Mode'}
                   </Fr_text>

@@ -1,8 +1,8 @@
 import React from 'react';
-import 'react-native-gesture-handler';
+// import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {SafeAreaView, PermissionsAndroid, Linking, Alert} from 'react-native';
+import {SafeAreaView, PermissionsAndroid, Platform, Alert} from 'react-native';
 import Emitter from 'semitter';
 //
 import Splash from './src/screens/Splash';
@@ -49,7 +49,7 @@ class Battron extends React.Component {
   }
 
   componentDidMount = async () => {
-    await this.requestPermissions();
+    await this.requestNotificationPermission();
 
     setTimeout(
       () =>
@@ -60,52 +60,28 @@ class Battron extends React.Component {
 
   componentWillUnmount = () => {};
 
-  requestPermissions = async () => {
-    try {
-      let permissionsGranted;
-      const foregroundServicePermission = await PermissionsAndroid.request(
-        'android.permission.POST_NOTIFICATIONS',
-      );
-
-      if (foregroundServicePermission !== PermissionsAndroid.RESULTS.GRANTED) {
-        permissionsGranted = false;
-        if (
-          foregroundServicePermission ===
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
-        ) {
-          this.showPermissionAlert('notification service');
+  requestNotificationPermission = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          {
+            title: 'Notification Permission',
+            message: 'This app needs access to show notifications',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Notification permission granted');
         } else {
-          Alert.alert(
-            'Permissions required',
-            'This app needs notification service permission to function properly.',
-          );
+          console.log('Notification permission denied');
         }
+      } catch (err) {
+        console.warn(err);
       }
-
-      if (permissionsGranted) {
-        this.setState({permissionsGranted: true});
-      }
-    } catch (err) {
-      console.warn('Permission request error:', err);
-      this.setState({error: err.message});
     }
-  };
-
-  showPermissionAlert = permission => {
-    Alert.alert(
-      `${permission} Permission Required`,
-      `Please go to the app settings and enable the ${permission} permission manually.`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Open Settings',
-          onPress: () => {}, // Linking.openSettings(),
-        },
-      ],
-    );
   };
 
   render = () => {

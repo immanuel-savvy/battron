@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -21,5 +23,23 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <service
+        android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+        android:exported="true"
+        android:permission="android.permission.BIND_JOB_SERVICE" />
+      <receiver
+          android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher"
+          android:exported="true" />
+      <receiver
+          android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver"
+          android:enabled="true"
+          android:exported="true">
+          <intent-filter>
+              <action android:name="android.intent.action.BOOT_COMPLETED" />
+              <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+              <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+              <category android:name="android.intent.category.DEFAULT" />
+          </intent-filter>
+      </receiver>
     </application>
 </manifest>
