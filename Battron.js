@@ -10,6 +10,7 @@ import {App_data} from './Contexts';
 import Home from './src/screens/Home';
 import About_us from './src/screens/About_us';
 import Subscribe from './src/screens/Subscribe';
+import {notificationService} from './src/utils/notification_service';
 
 const emitter = new Emitter();
 
@@ -50,7 +51,11 @@ class Battron extends React.Component {
   componentDidMount = async () => {
     await this.requestPermissions();
 
-    setTimeout(() => this.setState({loading: false}), 2500);
+    setTimeout(
+      () =>
+        this.setState({loading: false}, () => notificationService.configure()),
+      2500,
+    );
   };
 
   componentWillUnmount = () => {};
@@ -59,7 +64,7 @@ class Battron extends React.Component {
     try {
       let permissionsGranted;
       const foregroundServicePermission = await PermissionsAndroid.request(
-        'android.permission.FOREGROUND_SERVICE',
+        'android.permission.POST_NOTIFICATIONS',
       );
 
       if (foregroundServicePermission !== PermissionsAndroid.RESULTS.GRANTED) {
@@ -68,11 +73,11 @@ class Battron extends React.Component {
           foregroundServicePermission ===
           PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
         ) {
-          this.showPermissionAlert('foreground service');
+          this.showPermissionAlert('notification service');
         } else {
           Alert.alert(
             'Permissions required',
-            'This app needs foreground service permission to function properly.',
+            'This app needs notification service permission to function properly.',
           );
         }
       }
@@ -97,7 +102,7 @@ class Battron extends React.Component {
         },
         {
           text: 'Open Settings',
-          onPress: () => Linking.openSettings(),
+          onPress: () => {}, // Linking.openSettings(),
         },
       ],
     );

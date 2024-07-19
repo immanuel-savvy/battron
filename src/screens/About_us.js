@@ -34,7 +34,7 @@ class About_us extends React.Component {
             <Bg_view
               shadowed
               style={{padding: wp(4), margin: wp(2.8), borderRadius: wp(2.8)}}>
-              <Fr_text style={{fontSize: wp(4.5), lineHeight: 24}}>
+              <Fr_text style={{fontSize: wp(4.5), lineHeight: 30}}>
                 Battron is on a mission to add value and relevance to everyone
                 who owns a gadget which enables them to preserve their battery
                 life which red uces unnecessary costs to replace your battery.
@@ -55,7 +55,7 @@ class About_us extends React.Component {
               <Fr_text
                 style={{
                   fontSize: wp(4.5),
-                  lineHeight: 24,
+                  lineHeight: 30,
                   // textAlign: 'justify',
                 }}>
                 Many brands are using personalisation to build better customer

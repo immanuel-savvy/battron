@@ -1,5 +1,10 @@
 import React from 'react';
-import {View, TouchableNativeFeedback, ScrollView} from 'react-native';
+import {
+  View,
+  TouchableNativeFeedback,
+  NativeModules,
+  ScrollView,
+} from 'react-native';
 import Bg_view from '../components/bg_view';
 import Fr_text from '../components/fr_text';
 import {hp, wp} from '../utils/dimensions';
@@ -8,19 +13,31 @@ import Text_input from '../components/text_input';
 import Text_btn from '../components/text_btn';
 import Header from '../components/header';
 import DeviceBattery from 'react-native-device-battery';
+import {notificationService} from '../utils/notification_service';
+
+const {MyNotificationModule} = NativeModules;
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       preset_battery_level: 80,
       hidden: true,
     };
   }
 
-  send_notifications = () => {};
+  send_notifications = () => {
+    notificationService.localNotification(
+      'Battery level has reached the preset limit.',
+    );
+  };
 
   componentDidMount = async () => {
+    MyNotificationModule.showNotification(
+      'Battron',
+      'Battery Monitoring is active',
+    );
     let inactive = await AsyncStorage.getItem('inactive');
     this.setState({deactivated: inactive});
 
@@ -32,16 +49,22 @@ class Home extends React.Component {
         this.setState({charging: state.charging});
 
       let battery_level = Math.round(state.level * 100);
-      if (battery_level >= preset_battery_level) {
+
+      if (battery_level !== this.state.battery_level)
+        this.setState({battery_level});
+
+      if (battery_level >= (preset_battery_level || 80)) {
         if (!played) this.send_notifications();
       }
     };
 
-    if (!inactive) {
-      let preset_level = Number(await AsyncStorage.getItem('preset_level'));
-      if (!isNaN(preset_level))
-        this.setState({preset_battery_level: preset_level});
+    let preset_level = Number(await AsyncStorage.getItem('preset_level'));
+    if (!isNaN(preset_level)) {
+      console.log(preset_level);
+      this.setState({preset_battery_level: preset_level});
+    }
 
+    if (!inactive) {
       DeviceBattery.addListener(this.onBatteryStateChanged);
     }
   };
@@ -72,6 +95,7 @@ class Home extends React.Component {
 
       if (deactivated) {
         AsyncStorage.setItem('inactive', 'true');
+        notificationService.stopAlarm();
       } else {
         AsyncStorage.removeItem('inactive');
       }
@@ -102,13 +126,13 @@ class Home extends React.Component {
             </Fr_text>
 
             <Bg_view
-              style={{justifyContent: 'space-between', marginTop: hp(2.5)}}
+              style={{justifyContent: 'space-evenly', marginTop: hp(2.5)}}
               horizontal>
               {this.maxs.map((m, i) => (
                 <TouchableNativeFeedback
                   key={i}
                   onPress={() => {
-                    this.handleInputChange(m, this.set_battery_level);
+                    this.handleInputChange(m);
                   }}>
                   <View>
                     <Bg_view
@@ -118,6 +142,7 @@ class Home extends React.Component {
                         borderRadius: wp(2.8),
                         borderColor: '#000',
                         marginBottom: 10,
+                        marginHorizontal: 10,
                         backgroundColor:
                           Number(m) === preset_battery_level
                             ? '#db8330'
@@ -152,9 +177,7 @@ class Home extends React.Component {
                 no_bottom
                 label="Enter prefered limit"
                 on_change_text={preset_battery_level =>
-                  this.handleInputChange(preset_battery_level, () =>
-                    this.deactivate(),
-                  )
+                  this.handleInputChange(preset_battery_level)
                 }
                 placeholder="Type here..."
                 value={preset_battery_level.toString()}
