@@ -1,12 +1,12 @@
-let DEV = false;
+let DEV = true;
 let PRD = !DEV;
 
 let domain = `${
   PRD
     ? 'https://mobile.giitafrica.com'
     : false
-    ? 'http://192.168.43.203:3600'
-    : 'http://10.0.2.2:3600'
+    ? 'http://192.168.43.203:1450'
+    : 'http://10.0.2.2:1450'
 }`;
 
 let sock_domain = DEV

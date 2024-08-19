@@ -11,10 +11,42 @@ import Home from './src/screens/Home';
 import About_us from './src/screens/About_us';
 import Subscribe from './src/screens/Subscribe';
 import {notificationService} from './src/utils/notification_service';
+import Login from './src/screens/Login';
+import Verify_otp from './src/screens/Verify_otp';
+import Signup from './src/screens/Signup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {post_request} from './src/utils/services';
 
 const emitter = new Emitter();
 
 const App_stack = createStackNavigator();
+
+const Auth_stack = createStackNavigator();
+
+class Auth_stack_entry extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+
+  render = () => {
+    return (
+      <Auth_stack.Navigator
+        initialRouteName="login"
+        screenOptions={{
+          headerShown: false,
+          keyboardHandlingEnabled: true,
+          gestureEnabled: true,
+          animationEnabled: true,
+        }}>
+        <Auth_stack.Screen name="login" component={Login} />
+        <Auth_stack.Screen name="verify_otp" component={Verify_otp} />
+        <Auth_stack.Screen name="signup" component={Signup} />
+      </Auth_stack.Navigator>
+    );
+  };
+}
 
 class App_stack_entry extends React.Component {
   constructor(props) {
@@ -49,13 +81,23 @@ class Battron extends React.Component {
   }
 
   componentDidMount = async () => {
+    let start = Date.now();
     await this.requestNotificationPermission();
 
-    setTimeout(
-      () =>
-        this.setState({loading: false}, () => notificationService.configure()),
-      2500,
-    );
+    notificationService.configure();
+
+    let user = await AsyncStorage.getItem('user');
+    if (user) user = await post_request(`user/${user}`);
+    console.log(user);
+
+    this.setState({user});
+
+    let diff = Date.now() - start;
+    let wait = 3000 - diff;
+    if (wait < 0) wait = 0;
+    setTimeout(() => {
+      this.setState({loading: false});
+    }, wait);
   };
 
   componentWillUnmount = () => {};
@@ -85,7 +127,7 @@ class Battron extends React.Component {
   };
 
   render = () => {
-    let {loading} = this.state;
+    let {loading, user} = this.state;
 
     return (
       <NavigationContainer>
@@ -93,9 +135,13 @@ class Battron extends React.Component {
           {loading ? (
             <Splash />
           ) : (
-            <App_data.Provider value={{}}>
+            <App_data.Provider value={{user}}>
               <SafeAreaView style={{flex: 1}}>
-                <App_stack_entry />
+                {user?._id ? (
+                  <App_stack_entry user={user} />
+                ) : (
+                  <Auth_stack_entry />
+                )}
               </SafeAreaView>
             </App_data.Provider>
           )}

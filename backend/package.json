@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Backend.js",
+  "scripts": {
+    "start": "nodemon -r esm Backend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "generalised-datastore": "^1.7.85",
+    "nodemailer": "^6.8.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "latest",
+    "@babel/core": "^7.19.1",
+    "apidoc": "^0.54.0",
+    "babel-preset-env": "^1.7.0",
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.20"
+  },
+  "author": "Savvy",
+  "license": "ISC"
+}

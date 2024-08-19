@@ -37,7 +37,7 @@ class About_us extends React.Component {
               <Fr_text style={{fontSize: wp(4.5), lineHeight: 30}}>
                 Battron is on a mission to add value and relevance to everyone
                 who owns a gadget which enables them to preserve their battery
-                life which red uces unnecessary costs to replace your battery.
+                life, reducing unnecessary costs to replace your battery.
               </Fr_text>
             </Bg_view>
             <Fr_text
@@ -61,11 +61,11 @@ class About_us extends React.Component {
                 Many brands are using personalisation to build better customer
                 journeys but we believe it takes more than personalisation to
                 build truly unforgettable digital experiences. Thats why we’re
-                committed to delivering relevancy Many brands are using
+                committed to delivering relevance. Many brands are using
                 personalisation to build better customer journeys but we believe
                 it takes more than personalisation to build truly unforgettable
                 digital experiences. Thats why we’re committed to delivering
-                relevancy.
+                relevance.
               </Fr_text>
             </Bg_view>
           </Bg_view>
