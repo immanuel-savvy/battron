@@ -20,11 +20,11 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {not_reveal: true};
   }
 
   login = async () => {
-    let {navigation}=this.props;
+    let {navigation} = this.props;
     let {email, password, loading} = this.state;
     if (loading) return;
 
