@@ -31,7 +31,7 @@ class Subscribe extends React.Component {
           paddingBottom: 0,
           backgroundColor: '#000',
         }}>
-        <Header title="subscribe" navigation={navigation} />
+        {/* <Header title="subscribe" navigation={navigation} /> */}
 
         <ScrollView
           showsVerticalScrollIndicator={false}

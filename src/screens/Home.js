@@ -10,6 +10,7 @@ import Header from '../components/header';
 import DeviceBattery from 'react-native-device-battery';
 import {notificationService} from '../utils/notification_service';
 import Icon from '../components/icon';
+import {App_data} from '../../Contexts';
 
 class Home extends React.Component {
   constructor(props) {
@@ -83,6 +84,9 @@ class Home extends React.Component {
   };
 
   toggle_activation = async () => {
+    if (!this.user?.subscription_running) {
+      return this.props.navigation.navigate('subscribe');
+    }
     this.setState({deactivated: !this.state.deactivated}, () => {
       let {deactivated} = this.state;
 
@@ -105,175 +109,183 @@ class Home extends React.Component {
     let {navigation} = this.props;
 
     return (
-      <Bg_view
-        style={{
-          flex: 1,
-          paddingBottom: 0,
-          backgroundColor: '#000',
-        }}>
-        <Header
-          style={{paddingHorizontal: wp(5), paddingTop: wp(5)}}
-          title="home"
-          navigation={navigation}
-        />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          /* contentContainerStyle={{flex: 1}} */
-        >
-          <Bg_view no_bg style={{padding: wp(5)}}>
-            <Bg_view no_bg>
-              <Fr_text
-                color="#fff"
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: wp(5),
-                  marginTop: hp(2.5),
-                  textAlign: 'center',
-                }}>
-                Select Maximum {charging ? `(Charging)` : null}
-              </Fr_text>
-            </Bg_view>
+      <App_data.Consumer>
+        {({user}) => {
+          this.user = user;
 
-            <Bg_view no_bg style={{alignItems: 'center'}}>
-              <TouchableNativeFeedback
-                onPress={() =>
-                  fully_charged ? null : this.toggle_activation()
-                }>
-                <View>
-                  <Icon
-                    style={{height: hp(40), width: hp(40)}}
-                    icon={
-                      fully_charged
-                        ? require('../assets/icons/meter.png')
-                        : deactivated
-                        ? require('../assets/icons/activate.png')
-                        : require('../assets/icons/deactivate.png')
-                    }
-                  />
-                </View>
-              </TouchableNativeFeedback>
-            </Bg_view>
-
-            {fully_charged ? (
-              <Bg_view centralise no_bg style={{alignItems: 'center'}}>
-                <Fr_text color="#fff" size={wp(5.6)}>
-                  {preset_battery_level}%
-                </Fr_text>
-                <Fr_text color="#fff" size={wp(5.6)}>
-                  Fully Charged
-                </Fr_text>
-                <Fr_text color="#fff" size={wp(5.6)}>
-                  Maximum Selected
-                </Fr_text>
-              </Bg_view>
-            ) : null}
-          </Bg_view>
-
-          <Bg_view
-            flex
-            style={{
-              backgroundColor: '#111',
-              padding: wp(4),
-              borderRadius: wp(4),
-            }}>
+          return (
             <Bg_view
-              no_bg
               style={{
-                alignItems: 'center',
+                flex: 1,
+                paddingBottom: 0,
+                backgroundColor: '#000',
               }}>
-              <Fr_text color="#36AFC9F0">Click button to</Fr_text>
-              <TouchableNativeFeedback onPress={this.toggle_activation}>
-                <View>
-                  <Bg_view
-                    style={{
-                      backgroundColor: '#333',
-                      paddingHorizontal: wp(7.5),
-                      marginTop: hp(1.4),
-                      borderRadius: wp(45),
-                      height: hp(5),
-                      justifyContent: 'center',
-                    }}>
-                    <Fr_text bold color="#fff">
-                      {deactivated ? 'Start' : 'Stop'}
+              <Header
+                style={{paddingHorizontal: wp(5), paddingTop: wp(5)}}
+                title="home"
+                navigation={navigation}
+              />
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                /* contentContainerStyle={{flex: 1}} */
+              >
+                <Bg_view no_bg style={{padding: wp(5)}}>
+                  <Bg_view no_bg>
+                    <Fr_text
+                      color="#fff"
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: wp(5),
+                        marginTop: hp(2.5),
+                        textAlign: 'center',
+                      }}>
+                      Select Maximum {charging ? `(Charging)` : null}
                     </Fr_text>
                   </Bg_view>
-                </View>
-              </TouchableNativeFeedback>
-            </Bg_view>
 
-            {hidden ? (
-              <Text_btn
-                text={'Enter custom'}
-                bold
-                color="#db8330"
-                accent
-                action={this.toggle_hidden}
-              />
-            ) : (
-              <Bg_view
-                // no_bg
-                style={{
-                  margin: wp(4),
-                  padding: wp(2.8),
-                  paddingBottom: 0,
-                  borderRadius: wp(2.8),
-                  backgroundColor: '#eee',
-                }}>
-                <Text_input
-                  no_bottom
-                  label="Enter prefered limit"
-                  on_change_text={preset_battery_level =>
-                    this.handleInputChange(preset_battery_level)
-                  }
-                  placeholder="Type here..."
-                  value={preset_battery_level.toString()}
-                />
-                <Text_btn
-                  text={'Hide'}
-                  bold
-                  accent
-                  action={this.toggle_hidden}
-                />
-              </Bg_view>
-            )}
+                  <Bg_view no_bg style={{alignItems: 'center'}}>
+                    <TouchableNativeFeedback
+                      onPress={() =>
+                        fully_charged ? null : this.toggle_activation()
+                      }>
+                      <View>
+                        <Icon
+                          style={{height: hp(40), width: hp(40)}}
+                          icon={
+                            fully_charged
+                              ? require('../assets/icons/meter.png')
+                              : deactivated
+                              ? require('../assets/icons/activate.png')
+                              : require('../assets/icons/deactivate.png')
+                          }
+                        />
+                      </View>
+                    </TouchableNativeFeedback>
+                  </Bg_view>
 
-            <Bg_view
-              no_bg
-              style={{justifyContent: 'space-evenly', marginTop: hp(2.5)}}
-              horizontal>
-              {this.maxs.map((m, i) => (
-                <TouchableNativeFeedback
-                  key={i}
-                  onPress={() => {
-                    this.handleInputChange(m);
-                  }}>
-                  <View>
-                    <Bg_view
-                      shadowed={10}
-                      key={m}
-                      style={{
-                        borderRadius: wp(2.8),
-                        borderColor: '#52AE27',
-                        borderWidth: 1,
-                        marginBottom: 10,
-                        marginHorizontal: 10,
-                        alignItems: 'center',
-                        backgroundColor:
-                          Number(m) === preset_battery_level
-                            ? '#52AE27'
-                            : '#333',
-                        padding: wp(8),
-                      }}>
-                      <Icon icon={require('../assets/icons/ba3.png')} />
-                      <Fr_text color="#fff">{m}%</Fr_text>
+                  {fully_charged ? (
+                    <Bg_view centralise no_bg style={{alignItems: 'center'}}>
+                      <Fr_text color="#fff" size={wp(5.6)}>
+                        {preset_battery_level}%
+                      </Fr_text>
+                      <Fr_text color="#fff" size={wp(5.6)}>
+                        Fully Charged
+                      </Fr_text>
+                      <Fr_text color="#fff" size={wp(5.6)}>
+                        Maximum Selected
+                      </Fr_text>
                     </Bg_view>
-                  </View>
-                </TouchableNativeFeedback>
-              ))}
+                  ) : null}
+                </Bg_view>
+
+                <Bg_view
+                  flex
+                  style={{
+                    backgroundColor: '#111',
+                    padding: wp(4),
+                    borderRadius: wp(4),
+                  }}>
+                  <Bg_view
+                    no_bg
+                    style={{
+                      alignItems: 'center',
+                    }}>
+                    <Fr_text color="#36AFC9F0">Click button to</Fr_text>
+                    <TouchableNativeFeedback onPress={this.toggle_activation}>
+                      <View>
+                        <Bg_view
+                          style={{
+                            backgroundColor: '#333',
+                            paddingHorizontal: wp(7.5),
+                            marginTop: hp(1.4),
+                            borderRadius: wp(45),
+                            height: hp(5),
+                            justifyContent: 'center',
+                          }}>
+                          <Fr_text bold color="#fff">
+                            {deactivated ? 'Start' : 'Stop'}
+                          </Fr_text>
+                        </Bg_view>
+                      </View>
+                    </TouchableNativeFeedback>
+                  </Bg_view>
+
+                  {hidden ? (
+                    <Text_btn
+                      text={'Enter custom'}
+                      bold
+                      color="#db8330"
+                      accent
+                      action={this.toggle_hidden}
+                    />
+                  ) : (
+                    <Bg_view
+                      // no_bg
+                      style={{
+                        margin: wp(4),
+                        padding: wp(2.8),
+                        paddingBottom: 0,
+                        borderRadius: wp(2.8),
+                        backgroundColor: '#eee',
+                      }}>
+                      <Text_input
+                        no_bottom
+                        label="Enter prefered limit"
+                        on_change_text={preset_battery_level =>
+                          this.handleInputChange(preset_battery_level)
+                        }
+                        placeholder="Type here..."
+                        value={preset_battery_level.toString()}
+                      />
+                      <Text_btn
+                        text={'Hide'}
+                        bold
+                        accent
+                        action={this.toggle_hidden}
+                      />
+                    </Bg_view>
+                  )}
+
+                  <Bg_view
+                    no_bg
+                    style={{justifyContent: 'space-evenly', marginTop: hp(2.5)}}
+                    horizontal>
+                    {this.maxs.map((m, i) => (
+                      <TouchableNativeFeedback
+                        key={i}
+                        onPress={() => {
+                          this.handleInputChange(m);
+                        }}>
+                        <View>
+                          <Bg_view
+                            shadowed={10}
+                            key={m}
+                            style={{
+                              borderRadius: wp(2.8),
+                              borderColor: '#52AE27',
+                              borderWidth: 1,
+                              marginBottom: 10,
+                              marginHorizontal: 10,
+                              alignItems: 'center',
+                              backgroundColor:
+                                Number(m) === preset_battery_level
+                                  ? '#52AE27'
+                                  : '#333',
+                              padding: wp(8),
+                            }}>
+                            <Icon icon={require('../assets/icons/ba3.png')} />
+                            <Fr_text color="#fff">{m}%</Fr_text>
+                          </Bg_view>
+                        </View>
+                      </TouchableNativeFeedback>
+                    ))}
+                  </Bg_view>
+                </Bg_view>
+              </ScrollView>
             </Bg_view>
-          </Bg_view>
-        </ScrollView>
-      </Bg_view>
+          );
+        }}
+      </App_data.Consumer>
     );
   }
 }
