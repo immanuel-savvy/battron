@@ -15,7 +15,7 @@ import Login from './src/screens/Login';
 import Verify_otp from './src/screens/Verify_otp';
 import Signup from './src/screens/Signup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {post_request} from './src/utils/services';
+import {get_request, post_request} from './src/utils/services';
 
 const emitter = new Emitter();
 
@@ -87,7 +87,7 @@ class Battron extends React.Component {
     notificationService.configure();
 
     let user = await AsyncStorage.getItem('user');
-    if (user) user = await post_request(`user/${user}`);
+    if (user) user = await get_request(`user/${user}`);
 
     this.setState({user});
 
@@ -98,11 +98,11 @@ class Battron extends React.Component {
       this.setState({loading: false});
     }, wait);
 
-    this.login = user =>{
-      this.setState({user})
-      AsyncStorage.setItem('user', user._id)
-    }
-    emitter.listen('login', this.login)
+    this.login = user => {
+      this.setState({user});
+      AsyncStorage.setItem('user', user._id);
+    };
+    emitter.listen('login', this.login);
   };
 
   componentWillUnmount = () => {};

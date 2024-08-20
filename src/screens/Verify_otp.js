@@ -13,25 +13,32 @@ import Icon from '../components/icon';
 import Feather from 'react-native-vector-icons/Feather';
 import Text_btn from '../components/text_btn';
 import {post_request} from '../utils/services';
+import {emitter} from '../../Battron';
 
 class Verify_otp extends React.Component {
   constructor(props) {
     super(props);
 
-    let {email} = this.props.routes.params;
+    let {email} = this.props.route.params;
 
     this.state = {email};
   }
 
   verify = async () => {
-    let {email, code} = this.state;
+    let {email, code, loading} = this.state;
+    console.log(email, code);
+    if (!code.trim() || loading) return;
+    this.setState({loading: true});
 
     let res = await post_request('verify_email', {
       email,
-      verification_code: code,
+      verification_code: code.trim(),
     });
     if (!res?._id)
-      return this.setState({message: res || 'Err, something went wrong.'});
+      return this.setState({
+        loading: false,
+        message: res || 'Err, something went wrong.',
+      });
     emitter.emit('login', res);
   };
 

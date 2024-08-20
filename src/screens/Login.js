@@ -24,6 +24,7 @@ class Login extends React.Component {
   }
 
   login = async () => {
+    let {navigation}=this.props;
     let {email, password, loading} = this.state;
     if (loading) return;
 
@@ -51,7 +52,7 @@ class Login extends React.Component {
 
   render() {
     let {navigation} = this.props;
-    let {email, password, message, loading} = this.state;
+    let {email, password, message, not_reveal, loading} = this.state;
 
     return (
       <Bg_view flex>
@@ -104,6 +105,7 @@ class Login extends React.Component {
                 <TextInput
                   placeholder="Enter your password..."
                   placeholderTextColor="#ccc"
+                  secureTextEntry={not_reveal}
                   value={password}
                   onChangeText={password => this.setState({password})}
                   style={{

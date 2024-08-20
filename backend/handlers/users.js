@@ -120,7 +120,7 @@ const request_otp = (req, res) => {
   let {email} = req.body;
 
   let code = generate_random_string(6);
-  email_verification_codes[email] = code;
+  email_verification_codes[email.trim().toLowerCase()] = code;
 
   send_mail({
     recipient: email,
@@ -170,10 +170,13 @@ const user = (req, res) => {
 
 const verify_email = (req, res) => {
   let {email, verification_code} = req.body;
+
   email = email && email.trim().toLowerCase();
   verification_code = verification_code && verification_code.trim();
 
+  console.log(email, verification_code);
   let code = email_verification_codes[email];
+  console.log(code);
 
   if (!code || code !== verification_code)
     return res.json({
