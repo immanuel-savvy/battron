@@ -46,7 +46,8 @@ class Home extends React.Component {
 
       if (battery_level >= (preset_battery_level || 80)) {
         if (!played) this.send_notifications();
-      }
+        this.setState({fully_charged: true});
+      } else this.setState({fully_charged: false});
     };
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level'));
@@ -99,7 +100,8 @@ class Home extends React.Component {
   maxs = [80, 90, 100];
 
   render() {
-    let {preset_battery_level, hidden, deactivated, charging} = this.state;
+    let {preset_battery_level, hidden, fully_charged, deactivated, charging} =
+      this.state;
     let {navigation} = this.props;
 
     return (
@@ -114,7 +116,10 @@ class Home extends React.Component {
           title="home"
           navigation={navigation}
         />
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          /* contentContainerStyle={{flex: 1}} */
+        >
           <Bg_view no_bg style={{padding: wp(5)}}>
             <Bg_view no_bg>
               <Fr_text
@@ -130,12 +135,17 @@ class Home extends React.Component {
             </Bg_view>
 
             <Bg_view no_bg style={{alignItems: 'center'}}>
-              <TouchableNativeFeedback onPress={() => this.toggle_activation()}>
+              <TouchableNativeFeedback
+                onPress={() =>
+                  fully_charged ? null : this.toggle_activation()
+                }>
                 <View>
                   <Icon
                     style={{height: hp(40), width: hp(40)}}
                     icon={
-                      deactivated
+                      fully_charged
+                        ? require('../assets/icons/meter.png')
+                        : deactivated
                         ? require('../assets/icons/activate.png')
                         : require('../assets/icons/deactivate.png')
                     }
@@ -143,6 +153,20 @@ class Home extends React.Component {
                 </View>
               </TouchableNativeFeedback>
             </Bg_view>
+
+            {fully_charged ? (
+              <Bg_view centralise no_bg style={{alignItems: 'center'}}>
+                <Fr_text color="#fff" size={wp(5.6)}>
+                  {preset_battery_level}%
+                </Fr_text>
+                <Fr_text color="#fff" size={wp(5.6)}>
+                  Fully Charged
+                </Fr_text>
+                <Fr_text color="#fff" size={wp(5.6)}>
+                  Maximum Selected
+                </Fr_text>
+              </Bg_view>
+            ) : null}
           </Bg_view>
 
           <Bg_view
@@ -152,10 +176,36 @@ class Home extends React.Component {
               padding: wp(4),
               borderRadius: wp(4),
             }}>
+            <Bg_view
+              no_bg
+              style={{
+                alignItems: 'center',
+              }}>
+              <Fr_text color="#36AFC9F0">Click button to</Fr_text>
+              <TouchableNativeFeedback onPress={this.toggle_activation}>
+                <View>
+                  <Bg_view
+                    style={{
+                      backgroundColor: '#333',
+                      paddingHorizontal: wp(7.5),
+                      marginTop: hp(1.4),
+                      borderRadius: wp(45),
+                      height: hp(5),
+                      justifyContent: 'center',
+                    }}>
+                    <Fr_text bold color="#fff">
+                      {deactivated ? 'Start' : 'Stop'}
+                    </Fr_text>
+                  </Bg_view>
+                </View>
+              </TouchableNativeFeedback>
+            </Bg_view>
+
             {hidden ? (
               <Text_btn
                 text={'Enter custom'}
                 bold
+                color="#db8330"
                 accent
                 action={this.toggle_hidden}
               />
@@ -203,16 +253,19 @@ class Home extends React.Component {
                       key={m}
                       style={{
                         borderRadius: wp(2.8),
-                        borderColor: '#000',
+                        borderColor: '#52AE27',
+                        borderWidth: 1,
                         marginBottom: 10,
                         marginHorizontal: 10,
+                        alignItems: 'center',
                         backgroundColor:
                           Number(m) === preset_battery_level
-                            ? '#db8330'
-                            : '#fff',
-                        padding: wp(4),
+                            ? '#52AE27'
+                            : '#333',
+                        padding: wp(8),
                       }}>
-                      <Fr_text>{m}%</Fr_text>
+                      <Icon icon={require('../assets/icons/ba3.png')} />
+                      <Fr_text color="#fff">{m}%</Fr_text>
                     </Bg_view>
                   </View>
                 </TouchableNativeFeedback>

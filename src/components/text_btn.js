@@ -14,6 +14,7 @@ const Text_btn = ({
   centralise,
   style,
   accent,
+  color,
   italic,
   long_action,
   icon,
@@ -37,6 +38,7 @@ const Text_btn = ({
           size={size}
           capitalise={capitalise}
           italic={italic}
+          color={color}
           bold={bold}>
           {text}
         </Fr_text>
