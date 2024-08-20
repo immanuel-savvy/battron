@@ -5,7 +5,7 @@ import {domain} from '../utils/services';
 import Bg_view from './bg_view';
 
 const Icon = ({icon, component, action, text, style}) => {
-  if (!icon) return null;
+  if (!icon && !component) return null;
 
   if (typeof icon === 'string') icon = {uri: `${domain}/icons/${icon}`};
 

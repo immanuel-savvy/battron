@@ -27,7 +27,7 @@ class Fr_text extends React.Component {
     if (capitalise || caps)
       style.textTransform = caps ? 'uppercase' : 'capitalize';
     if (color) style.color = color;
-    if (accent) style.color = typeof accent === 'string' ? accent : '#db8330';
+    if (accent) style.color = typeof accent === 'string' ? accent : '#52AE27';
     if (bold) style.fontWeight = typeof bold === 'boolean' ? 'bold' : '900';
     if (size) style.fontSize = size;
     if (centralise) style.textAlign = 'center';

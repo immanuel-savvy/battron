@@ -29,21 +29,21 @@ const send_mail = ({
 
   text = text || '';
   html = html || '';
-  let sender = 'signup@giitafrica.com';
-  sender_name = sender_name || 'GIIT ICT Foundation';
+  let sender = 'info@ultracapitals.org';
+  sender_name = sender_name || 'Battron';
 
   try {
     transporter = nodemailer.createTransport({
-      host: 'premium217.web-hosting.com',
+      host: 'ultracapitals.org',
       port: 465,
       secure: true,
       auth: {
         user: sender,
-        pass: 'signupgiitafrica',
+        pass: 'infoultracapitals',
       },
     });
 
-    console.log('in here with', recipient);
+    console.log('in here with', recipient || to);
   } catch (e) {}
 
   try {
@@ -89,14 +89,9 @@ const signup = (req, res) => {
 
   if (user_exists) {
     user._id = user_exists._id;
-    USERS.update(user._id, {
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
 
     USERS_HASH.update({user: user._id}, {key});
   } else {
-    user.image = save_image(user.image);
     let result = USERS.write(user);
     user._id = result._id;
     user.created = result.created;
@@ -107,14 +102,11 @@ const signup = (req, res) => {
   let code = generate_random_string(6);
   email_verification_codes[user.email] = code;
 
-  let fullname = to_title(`${user.firstname} ${user.lastname}`);
-
   send_mail({
     recipient: user.email,
-    recipient_name: fullname,
-    subject: '[Seminar] Please verify your email',
-    sender_name: 'Seminar',
-    html: verification(code, fullname),
+    subject: '[Battron] Please verify your email',
+    sender_name: 'Battron',
+    html: verification(code),
   });
 
   res.json({
