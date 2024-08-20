@@ -17,28 +17,36 @@ class Header extends React.Component {
   toggle_options = () => this.options?.toggle();
 
   render() {
-    let {title, navigation} = this.props;
+    let {title, navigation, style} = this.props;
 
     return (
       <>
         <Bg_view
+          no_bg
           style={{
             justifyContent: 'space-between',
             borderBottomColor: '#ccc',
             borderBottomWidth: 1,
             paddingBottom: hp(2),
+            ...style,
           }}
           horizontal>
           {title !== 'home' ? (
-            <TouchableNativeFeedback onPress={navigation?.goBack}>
-              <Feather name="chevron-left" color="#000" size={wp(6.5)} />
+            <TouchableNativeFeedback onPress={null}>
+              <Bg_view />
+              {/* <Feather name="chevron-left" color="#000" size={wp(6.5)} /> */}
             </TouchableNativeFeedback>
           ) : null}
-          <Fr_text bold="900" size={wp(5)} capitalise>
+          <Fr_text
+            bold="900"
+            size={wp(5)}
+            color={title === 'home' ? '#fff' : null}
+            capitalise>
             {title === 'home' ? 'Welcome' : title}
           </Fr_text>
-          <TouchableNativeFeedback onPress={this.toggle_options}>
-            <Feather name="menu" color="#000" size={wp(7.5)} />
+          <TouchableNativeFeedback onPress={null}>
+            <Bg_view />
+            {/* <Feather name="menu" color="#000" size={wp(7.5)} /> */}
           </TouchableNativeFeedback>
         </Bg_view>
         <Cool_modal ref={options => (this.options = options)}>

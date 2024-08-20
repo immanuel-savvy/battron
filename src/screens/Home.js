@@ -9,6 +9,7 @@ import Text_btn from '../components/text_btn';
 import Header from '../components/header';
 import DeviceBattery from 'react-native-device-battery';
 import {notificationService} from '../utils/notification_service';
+import Icon from '../components/icon';
 
 class Home extends React.Component {
   constructor(props) {
@@ -102,21 +103,92 @@ class Home extends React.Component {
     let {navigation} = this.props;
 
     return (
-      <Bg_view style={{padding: wp(5), flex: 1, paddingBottom: 0}}>
-        <Header title="home" navigation={navigation} />
+      <Bg_view
+        style={{
+          flex: 1,
+          paddingBottom: 0,
+          backgroundColor: '#000',
+        }}>
+        <Header
+          style={{paddingHorizontal: wp(5), paddingTop: wp(5)}}
+          title="home"
+          navigation={navigation}
+        />
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Bg_view>
-            <Fr_text
-              style={{
-                fontWeight: 'bold',
-                fontSize: wp(5),
-                marginTop: hp(2.5),
-                textAlign: 'center',
-              }}>
-              Select Maximum {charging ? `(Charging)` : null}
-            </Fr_text>
+          <Bg_view no_bg style={{padding: wp(5)}}>
+            <Bg_view no_bg>
+              <Fr_text
+                color="#fff"
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: wp(5),
+                  marginTop: hp(2.5),
+                  textAlign: 'center',
+                }}>
+                Select Maximum {charging ? `(Charging)` : null}
+              </Fr_text>
+            </Bg_view>
+
+            <Bg_view no_bg style={{alignItems: 'center'}}>
+              <TouchableNativeFeedback onPress={() => this.toggle_activation()}>
+                <View>
+                  <Icon
+                    style={{height: hp(40), width: hp(40)}}
+                    icon={
+                      deactivated
+                        ? require('../assets/icons/activate.png')
+                        : require('../assets/icons/deactivate.png')
+                    }
+                  />
+                </View>
+              </TouchableNativeFeedback>
+            </Bg_view>
+          </Bg_view>
+
+          <Bg_view
+            flex
+            style={{
+              backgroundColor: '#111',
+              padding: wp(4),
+              borderRadius: wp(4),
+            }}>
+            {hidden ? (
+              <Text_btn
+                text={'Enter custom'}
+                bold
+                accent
+                action={this.toggle_hidden}
+              />
+            ) : (
+              <Bg_view
+                // no_bg
+                style={{
+                  margin: wp(4),
+                  padding: wp(2.8),
+                  paddingBottom: 0,
+                  borderRadius: wp(2.8),
+                  backgroundColor: '#eee',
+                }}>
+                <Text_input
+                  no_bottom
+                  label="Enter prefered limit"
+                  on_change_text={preset_battery_level =>
+                    this.handleInputChange(preset_battery_level)
+                  }
+                  placeholder="Type here..."
+                  value={preset_battery_level.toString()}
+                />
+                <Text_btn
+                  text={'Hide'}
+                  bold
+                  accent
+                  action={this.toggle_hidden}
+                />
+              </Bg_view>
+            )}
 
             <Bg_view
+              no_bg
               style={{justifyContent: 'space-evenly', marginTop: hp(2.5)}}
               horizontal>
               {this.maxs.map((m, i) => (
@@ -146,67 +218,6 @@ class Home extends React.Component {
                 </TouchableNativeFeedback>
               ))}
             </Bg_view>
-          </Bg_view>
-
-          {hidden ? (
-            <Text_btn
-              text={'Enter custom'}
-              bold
-              accent
-              action={this.toggle_hidden}
-            />
-          ) : (
-            <Bg_view
-              style={{
-                margin: wp(4),
-                padding: wp(2.8),
-                paddingBottom: 0,
-                borderRadius: wp(2.8),
-              }}
-              shadowed={10}>
-              <Text_input
-                no_bottom
-                label="Enter prefered limit"
-                on_change_text={preset_battery_level =>
-                  this.handleInputChange(preset_battery_level)
-                }
-                placeholder="Type here..."
-                value={preset_battery_level.toString()}
-              />
-              <Text_btn text={'Hide'} bold accent action={this.toggle_hidden} />
-            </Bg_view>
-          )}
-
-          <Bg_view style={{alignItems: 'center'}}>
-            <TouchableNativeFeedback onPress={() => this.toggle_activation()}>
-              <View>
-                <Bg_view
-                  shadowed={20}
-                  style={{
-                    height: hp(30),
-                    width: hp(30),
-                    marginTop: hp(8),
-                    backgroundColor: deactivated ? '#db8330' : '#2ab659',
-                    borderRadius: hp(15),
-                    marginBottom: hp(7.5),
-                    justifyContent: 'center',
-                    padding: wp(8),
-                    textAlign: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Fr_text
-                    capitalise
-                    style={{
-                      fontWeight: '900',
-                      textAlign: 'center',
-                      fontSize: wp(8),
-                      // color: '#fff',
-                    }}>
-                    {deactivated ? 'Activate Mode' : 'Deactivate Mode'}
-                  </Fr_text>
-                </Bg_view>
-              </View>
-            </TouchableNativeFeedback>
           </Bg_view>
         </ScrollView>
       </Bg_view>

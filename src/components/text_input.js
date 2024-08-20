@@ -25,7 +25,7 @@ class Text_input extends React.Component {
     } = this.props;
 
     return (
-      <Bg_view style={{marginBottom: no_bottom ? 0 : hp(4)}}>
+      <Bg_view no_bg style={{marginBottom: no_bottom ? 0 : hp(4)}}>
         {label && (
           <Fr_text
             size={wp(4.5)}
@@ -35,6 +35,7 @@ class Text_input extends React.Component {
           </Fr_text>
         )}
         <Bg_view
+          no_bg
           style={{
             borderBottomWidth: 1,
             flexDirection: 'row',

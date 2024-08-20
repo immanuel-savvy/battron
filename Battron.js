@@ -2,6 +2,7 @@ import React from 'react';
 // import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {SafeAreaView, PermissionsAndroid, Platform, Alert} from 'react-native';
 import Emitter from 'semitter';
 //
@@ -16,12 +17,15 @@ import Verify_otp from './src/screens/Verify_otp';
 import Signup from './src/screens/Signup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {get_request, post_request} from './src/utils/services';
+import Feather from 'react-native-vector-icons/Feather';
 
 const emitter = new Emitter();
 
 const App_stack = createStackNavigator();
 
 const Auth_stack = createStackNavigator();
+
+const Bottom_tabs = createBottomTabNavigator();
 
 class Auth_stack_entry extends React.Component {
   constructor(props) {
@@ -66,9 +70,57 @@ class App_stack_entry extends React.Component {
           animationEnabled: true,
         }}>
         <App_stack.Screen name="home" component={Home} />
-        <App_stack.Screen name="about_us" component={About_us} />
-        <App_stack.Screen name="subscribe" component={Subscribe} />
       </App_stack.Navigator>
+    );
+  };
+}
+
+class Bottom_tabs_entry extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render = () => {
+    return (
+      <Bottom_tabs.Navigator
+        initialRouteName="index"
+        backBehavior="initial"
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: '#52AE27',
+          /* tabBarInactiveTintColor: '#858597', */
+        }}>
+        <Bottom_tabs.Screen
+          name="index"
+          component={App_stack_entry}
+          options={{
+            tabBarLabel: 'Home',
+            tabBarIcon: ({color, size}) => (
+              <Feather name="home" color={color} size={size} />
+            ),
+          }}
+        />
+        <Bottom_tabs.Screen
+          name="about"
+          component={About_us}
+          options={{
+            tabBarLabel: 'About us',
+            tabBarIcon: ({color, size}) => (
+              <Feather name="user" color={color} size={size} />
+            ),
+          }}
+        />
+        <Bottom_tabs.Screen
+          name="subscribe"
+          component={Subscribe}
+          options={{
+            tabBarLabel: 'Subscribe',
+            tabBarIcon: ({color, size}) => (
+              <Feather name="heart" color={color} size={size} />
+            ),
+          }}
+        />
+      </Bottom_tabs.Navigator>
     );
   };
 }
@@ -142,11 +194,7 @@ class Battron extends React.Component {
           ) : (
             <App_data.Provider value={{user}}>
               <SafeAreaView style={{flex: 1}}>
-                {user?._id ? (
-                  <App_stack_entry user={user} />
-                ) : (
-                  <Auth_stack_entry />
-                )}
+                {user?._id ? <Bottom_tabs_entry /> : <Auth_stack_entry />}
               </SafeAreaView>
             </App_data.Provider>
           )}
