@@ -40,7 +40,7 @@ class NotificationService {
     }
   };
 
-  localNotification = message => {
+  localNotification = (message, id) => {
     PushNotification.localNotification({
       channelId: 'battery_stat',
       largeIcon: 'ic_launcher',
@@ -53,7 +53,7 @@ class NotificationService {
       title: 'Battery Level Alert',
       message,
       playSound: true,
-      id: 1,
+      id: id || 1,
       soundName: 'default',
     });
 

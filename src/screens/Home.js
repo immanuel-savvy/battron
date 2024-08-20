@@ -22,9 +22,11 @@ class Home extends React.Component {
     };
   }
 
-  send_notifications = () => {
+  send_notifications = (message, id) => {
     notificationService.localNotification(
-      `Battery level has reached the preset limit of ${this.state.preset_battery_level}%`,
+      message ||
+        `Battery level has reached the preset limit of ${this.state.preset_battery_level}%`,
+      id,
     );
   };
 
@@ -33,9 +35,14 @@ class Home extends React.Component {
     this.setState({deactivated: inactive});
 
     this.onBatteryStateChanged = state => {
-      let {preset_battery_level, charging, played, deactivated} = this.state;
+      let {preset_battery_level, charging, played, is_monitor, deactivated} =
+        this.state;
 
       if (deactivated) return;
+      if (!is_monitor) {
+        this.send_notifications('Battron is monitoring your battery level', 2);
+        this.setState({is_monitor: true});
+      }
 
       if (charging !== state.charging)
         this.setState({charging: state.charging});
@@ -92,6 +99,7 @@ class Home extends React.Component {
     }
     this.setState({deactivated: !this.state.deactivated}, () => {
       let {deactivated} = this.state;
+      console.log(deactivated);
 
       if (deactivated) {
         AsyncStorage.setItem('inactive', 'true');
