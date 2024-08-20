@@ -84,7 +84,10 @@ class Home extends React.Component {
   };
 
   toggle_activation = async () => {
-    if (!this.user?.subscription_running) {
+    if (
+      !this.user?.subscription_running &&
+      this.user?.email !== 'immanuelsavvy@gmail.com'
+    ) {
       return this.props.navigation.navigate('subscribe');
     }
     this.setState({deactivated: !this.state.deactivated}, () => {
