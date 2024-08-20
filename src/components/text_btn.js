@@ -17,30 +17,31 @@ const Text_btn = ({
   italic,
   long_action,
   icon,
-}) => (
-  <TouchableNativeFeedback
-    onLongPress={long_action}
-    disabled={disabled}
-    onPress={action}>
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: wp(1.4),
-        ...style,
-      }}>
-      {icon ? <Icon style={{marginRight: wp(1.4)}} icon={icon} /> : null}
-      <Fr_text
-        centralise={centralise}
-        accent={accent}
-        size={size}
-        capitalise={capitalise}
-        italic={italic}
-        bold={bold}>
-        {text}
-      </Fr_text>
-    </View>
-  </TouchableNativeFeedback>
-);
+}) =>
+  !text && !icon ? null : (
+    <TouchableNativeFeedback
+      onLongPress={long_action}
+      disabled={disabled}
+      onPress={action}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: wp(1.4),
+          ...style,
+        }}>
+        {icon ? <Icon style={{marginRight: wp(1.4)}} icon={icon} /> : null}
+        <Fr_text
+          centralise={centralise}
+          accent={accent}
+          size={size}
+          capitalise={capitalise}
+          italic={italic}
+          bold={bold}>
+          {text}
+        </Fr_text>
+      </View>
+    </TouchableNativeFeedback>
+  );
 
 export default Text_btn;

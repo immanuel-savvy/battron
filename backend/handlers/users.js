@@ -116,6 +116,22 @@ const signup = (req, res) => {
   });
 };
 
+const request_otp = (req, res) => {
+  let {email} = req.body;
+
+  let code = generate_random_string(6);
+  email_verification_codes[email] = code;
+
+  send_mail({
+    recipient: email,
+    subject: '[Battron] Please verify your email',
+    sender_name: 'Battron',
+    html: verification(code),
+  });
+
+  res.end();
+};
+
 const user_by_email = (req, res) => {
   let {email} = req.body;
 
@@ -203,5 +219,6 @@ export {
   verify_email,
   to_title,
   update_user,
+  request_otp,
   users,
 };

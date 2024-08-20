@@ -88,7 +88,6 @@ class Battron extends React.Component {
 
     let user = await AsyncStorage.getItem('user');
     if (user) user = await post_request(`user/${user}`);
-    console.log(user);
 
     this.setState({user});
 
@@ -98,6 +97,12 @@ class Battron extends React.Component {
     setTimeout(() => {
       this.setState({loading: false});
     }, wait);
+
+    this.login = user =>{
+      this.setState({user})
+      AsyncStorage.setItem('user', user._id)
+    }
+    emitter.listen('login', this.login)
   };
 
   componentWillUnmount = () => {};
