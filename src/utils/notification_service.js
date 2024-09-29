@@ -58,7 +58,7 @@ class NotificationService {
       allowWhileIdle: true,
     });
 
-    this.playAlarm();
+    !id && this.playAlarm();
   };
 
   playAlarm = () => {
