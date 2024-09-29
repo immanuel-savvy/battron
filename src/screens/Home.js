@@ -11,6 +11,7 @@ import DeviceBattery from 'react-native-device-battery';
 import {notificationService} from '../utils/notification_service';
 import Icon from '../components/icon';
 import {App_data} from '../../Contexts';
+import BackgroundActions from 'react-native-background-actions';
 
 class Home extends React.Component {
   constructor(props) {
@@ -45,7 +46,15 @@ class Home extends React.Component {
       }
 
       if (charging !== state.charging)
-        this.setState({charging: state.charging});
+        this.setState({charging: state.charging}, () => {
+          if (this.state.charging) {
+            this.setState({charge_loading: true}, () => {
+              setTimeout(() => {
+                this.setState({charge_loading: false});
+              }, 2500);
+            });
+          }
+        });
 
       let battery_level = Math.round(state.level * 100);
 
@@ -55,7 +64,8 @@ class Home extends React.Component {
       if (battery_level >= (preset_battery_level || 80)) {
         if (!played) this.send_notifications();
         this.setState({fully_charged: true});
-      } else this.setState({fully_charged: false});
+      } else
+        this.setState({fully_charged: false}, notificationService.stopAlarm);
     };
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level'));
@@ -88,6 +98,8 @@ class Home extends React.Component {
   deactivate = async () => {
     this.setState({deactivated: true});
     await AsyncStorage.setItem('inactive', `true`);
+    notificationService.stopAlarm();
+    await BackgroundActions.stop();
   };
 
   toggle_activation = async () => {
@@ -97,17 +109,20 @@ class Home extends React.Component {
     ) {
       return this.props.navigation.navigate('subscribe');
     }
-    this.setState({deactivated: !this.state.deactivated}, () => {
+    this.setState({deactivated: !this.state.deactivated, loading: true}, () => {
       let {deactivated} = this.state;
-      console.log(deactivated);
 
       if (deactivated) {
         AsyncStorage.setItem('inactive', 'true');
         notificationService.stopAlarm();
+        BackgroundActions.stop();
       } else {
         AsyncStorage.removeItem('inactive');
       }
     });
+    setTimeout(() => {
+      this.setState({loading: false});
+    }, 2500);
   };
 
   toggle_hidden = () => this.setState({hidden: !this.state.hidden});
@@ -115,8 +130,15 @@ class Home extends React.Component {
   maxs = [80, 90, 100];
 
   render() {
-    let {preset_battery_level, hidden, fully_charged, deactivated, charging} =
-      this.state;
+    let {
+      preset_battery_level,
+      loading,
+      hidden,
+      fully_charged,
+      deactivated,
+      charging,
+      charge_loading,
+    } = this.state;
     let {navigation} = this.props;
 
     return (
@@ -163,10 +185,16 @@ class Home extends React.Component {
                         <Icon
                           style={{height: hp(40), width: hp(40)}}
                           icon={
-                            fully_charged
-                              ? require('../assets/icons/meter.png')
+                            charge_loading
+                              ? require('../assets/icons/charg.gif')
+                              : fully_charged
+                              ? require('../assets/icons/MET.gif')
                               : deactivated
-                              ? require('../assets/icons/activate.png')
+                              ? loading
+                                ? require('../assets/icons/diactivate.gif')
+                                : require('../assets/icons/activate.png')
+                              : loading
+                              ? require('../assets/icons/diactivate.gif')
                               : require('../assets/icons/deactivate.png')
                           }
                         />
@@ -282,9 +310,12 @@ class Home extends React.Component {
                                 Number(m) === preset_battery_level
                                   ? '#52AE27'
                                   : '#333',
-                              padding: wp(8),
+                              padding: wp(7),
                             }}>
-                            <Icon icon={require('../assets/icons/ba3.png')} />
+                            <Icon
+                              style={{height: wp(7.5), width: wp(7.5)}}
+                              icon={require('../assets/icons/ba3.gif')}
+                            />
                             <Fr_text color="#fff">{m}%</Fr_text>
                           </Bg_view>
                         </View>

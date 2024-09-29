@@ -40,7 +40,7 @@ class Subscribe extends React.Component {
             <Fr_text color="#fff" size={wp(6.7)} centralise bold>
               Battron
             </Fr_text>
-            <Bg_view style={{padding: wp(5.6), paddingTop: hp(5)}} no_bg>
+            <Bg_view style={{padding: wp(5.6), paddingTop: hp(10)}} no_bg>
               <Bg_view no_bg horizontal>
                 <FontAwesome name="circle" color="#52AE27" size={wp(4.5)} />
 

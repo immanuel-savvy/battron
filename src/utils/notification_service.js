@@ -55,6 +55,7 @@ class NotificationService {
       playSound: true,
       id: id || 1,
       soundName: 'default',
+      allowWhileIdle: true,
     });
 
     this.playAlarm();

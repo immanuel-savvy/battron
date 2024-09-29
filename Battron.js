@@ -16,8 +16,10 @@ import Login from './src/screens/Login';
 import Verify_otp from './src/screens/Verify_otp';
 import Signup from './src/screens/Signup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get_request, post_request} from './src/utils/services';
+import {get_request} from './src/utils/services';
 import Feather from 'react-native-vector-icons/Feather';
+import BackgroundActions from 'react-native-background-actions';
+import DeviceBattery from 'react-native-device-battery';
 
 const emitter = new Emitter();
 
@@ -151,10 +153,59 @@ class Battron extends React.Component {
     }, wait);
 
     this.login = user => {
-      this.setState({user});
-      AsyncStorage.setItem('user', user._id);
+      AsyncStorage.setItem('inactive', 'true').then(() => {
+        this.setState({user});
+        AsyncStorage.setItem('user', user._id);
+      });
     };
     emitter.listen('login', this.login);
+
+    let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 80;
+
+    const sleep = time =>
+      new Promise(resolve => setTimeout(() => resolve(), time));
+
+    // Task to run in background
+    const battery_monitoring_task = async task_arguments => {
+      let {delay} = task_arguments;
+      console.log('Battery Monitoring Started');
+
+      while (BackgroundActions.isRunning()) {
+        let battery_level = (await DeviceBattery.getBatteryLevel()) * 100;
+
+        if (battery_level >= preset_level) {
+          // Example threshold
+          notificationService.localNotification(
+            `Battery level has reached the preset limit of ${preset_level}%`,
+          );
+        }
+
+        // Sleep to reduce CPU usage
+        await sleep(delay);
+      }
+    };
+
+    const options = {
+      taskName: 'Battery Monitoring',
+      taskTitle: 'Battery Monitor',
+      taskDesc: 'Monitoring battery levels',
+      taskIcon: {
+        name: 'ic_notification', // Icon in drawable folder for Android
+        type: 'drawable',
+      },
+      color: '#ff00ff',
+      linkingURI: 'myapp://home', // Deep linking
+      parameters: {
+        delay: 60000, // 1-minute intervals
+      },
+    };
+
+    const start_battery_monitoring = async () => {
+      await BackgroundActions.start(battery_monitoring_task, options);
+      console.log('Battery Monitoring in background started.');
+    };
+
+    if (!(await AsyncStorage.getItem('inactive'))) start_battery_monitoring();
   };
 
   componentWillUnmount = () => {};

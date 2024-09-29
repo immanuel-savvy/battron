@@ -26,7 +26,7 @@ class Header extends React.Component {
           style={{
             justifyContent: 'space-between',
             borderBottomColor: '#ccc',
-            borderBottomWidth: 1,
+            borderBottomWidth: title === 'home' ? 0 : 1,
             paddingBottom: hp(2),
             ...style,
           }}
