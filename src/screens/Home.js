@@ -191,10 +191,10 @@ class Home extends React.Component {
                               ? require('../assets/icons/MET.gif')
                               : deactivated
                               ? loading
-                                ? require('../assets/icons/diactivate.gif')
+                                ? require('../assets/icons/deacti.gif')
                                 : require('../assets/icons/activate.png')
                               : loading
-                              ? require('../assets/icons/diactivate.gif')
+                              ? require('../assets/icons/acti.gif')
                               : require('../assets/icons/deactivate.png')
                           }
                         />
