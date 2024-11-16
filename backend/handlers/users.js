@@ -29,17 +29,17 @@ const send_mail = ({
 
   text = text || '';
   html = html || '';
-  let sender = 'info@ultracapitals.org';
+  let sender = 'register@battron.tech';
   sender_name = sender_name || 'Battron';
 
   try {
     transporter = nodemailer.createTransport({
-      host: 'ultracapitals.org',
+      host: 'battron.tech',
       port: 465,
       secure: true,
       auth: {
         user: sender,
-        pass: 'infoultracapitals',
+        pass: 'battronregister',
       },
     });
 

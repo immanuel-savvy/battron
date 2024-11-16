@@ -23,6 +23,8 @@ class Login extends React.Component {
     this.state = {not_reveal: true};
   }
 
+  toggle_password = () => this.setState({not_reveal: !this.state.not_reveal});
+
   login = async () => {
     let {navigation} = this.props;
     let {email, password, loading} = this.state;
@@ -117,12 +119,17 @@ class Login extends React.Component {
                     justifyContent: 'center',
                   }}
                 />
+                <Text_btn
+                  italic
+                  text={`${not_reveal ? 'Show' : 'Hide'} password`}
+                  action={this.toggle_password}
+                />
               </Bg_view>
 
               <Text_btn
                 text="Forgot password?"
                 accent
-                action={() => navigation.navigate('forgot_password')}
+                action={() => navigation.navigate('verify_otp', {reset: true})}
                 style={{marginVertical: hp(2.8)}}
               />
 

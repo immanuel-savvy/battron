@@ -158,7 +158,11 @@ class Battron extends React.Component {
         AsyncStorage.setItem('user', user._id);
       });
     };
+    this.logout = () => {
+      this.setState({user: null}, () => AsyncStorage.removeItem('user'));
+    };
     emitter.listen('login', this.login);
+    emitter.listen('logout', this.logout);
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 80;
 
@@ -170,7 +174,7 @@ class Battron extends React.Component {
       let {delay} = task_arguments;
       console.log('Battery Monitoring Started');
 
-      while (BackgroundActions.isRunning()) {
+      while (BackgroundActions.isRunning() && this.state.user) {
         let battery_level = (await DeviceBattery.getBatteryLevel()) * 100;
 
         if (battery_level >= preset_level) {
@@ -205,7 +209,7 @@ class Battron extends React.Component {
       console.log('Battery Monitoring in background started.');
     };
 
-    if (!(await AsyncStorage.getItem('inactive'))) start_battery_monitoring();
+    // if (!(await AsyncStorage.getItem('inactive'))) start_battery_monitoring();
   };
 
   componentWillUnmount = () => {};

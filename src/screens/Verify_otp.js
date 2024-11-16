@@ -71,25 +71,45 @@ class Verify_otp extends React.Component {
                   centralise
                   bold
                   style={{marginBottom: hp(4), fontSize: wp(3.8)}}>
-                  We have sent a verification code to your inbox at (
-                  {email || 'immanuelsavvy@gmail.com'})
+                  {email
+                    ? `We have sent a verification code to your inbox at (${email})`
+                    : 'Please enter your email'}
                 </Fr_text>
-                <TextInput
-                  placeholder="- - - - - -"
-                  value={code}
-                  keyboardType="decimal-pad"
-                  onChangeText={code => this.setState({code})}
-                  placeholderTextColor="#ccc"
-                  style={{
-                    borderRadius: wp(2.8),
-                    borderColor: '#52AE27',
-                    borderWidth: 1,
-                    paddingHorizontal: wp(2.8),
-                    color: '#333',
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                  }}
-                />
+                {email ? null : (
+                  <TextInput
+                    placeholder="Email address"
+                    keyboardType="email-address"
+                    onChangeText={em => this.setState({em})}
+                    style={{
+                      borderRadius: wp(2.8),
+                      borderColor: '#52AE27',
+                      borderWidth: 1,
+                      paddingHorizontal: wp(2.8),
+                      color: '#333',
+                      textAlign: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 20,
+                    }}
+                  />
+                )}
+                {email ? (
+                  <TextInput
+                    placeholder="- - - - - -"
+                    value={code}
+                    keyboardType="decimal-pad"
+                    onChangeText={code => this.setState({code})}
+                    placeholderTextColor="#ccc"
+                    style={{
+                      borderRadius: wp(2.8),
+                      borderColor: '#52AE27',
+                      borderWidth: 1,
+                      paddingHorizontal: wp(2.8),
+                      color: '#333',
+                      textAlign: 'center',
+                      justifyContent: 'center',
+                    }}
+                  />
+                ) : null}
               </Bg_view>
             </Bg_view>
 
@@ -117,7 +137,7 @@ class Verify_otp extends React.Component {
                         color: '#fff',
                         fontWeight: 'bold',
                       }}>
-                      Verify Code
+                      {email ? 'Verify Code' : 'Request Code'}
                     </Fr_text>
                   )}
                 </Bg_view>
