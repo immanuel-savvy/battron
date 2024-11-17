@@ -3,7 +3,13 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {SafeAreaView, PermissionsAndroid, Platform, Alert} from 'react-native';
+import {
+  SafeAreaView,
+  PermissionsAndroid,
+  Platform,
+  Alert,
+  NativeModules,
+} from 'react-native';
 import Emitter from 'semitter';
 //
 import Splash from './src/screens/Splash';
@@ -170,19 +176,22 @@ class Battron extends React.Component {
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 80;
 
+    let {BatteryModule} = NativeModules;
+
     const sleep = time =>
       new Promise(resolve => setTimeout(() => resolve(), time));
 
     // Task to run in background
     const battery_monitoring_task = async task_arguments => {
       let {delay} = task_arguments;
-      console.log('Battery Monitoring Started');
+      console.log('Battery Monitoring Started', delay);
 
       while (BackgroundActions.isRunning() && this.state.user) {
-        let battery_level = (await DeviceBattery.getBatteryLevel()) * 100;
+        // console.log('LOLA GREY', await BatteryModule.getBatteryPercentage());
+        let battery_level = await BatteryModule.getBatteryPercentage();
 
         if (battery_level >= preset_level) {
-          // Example threshold
+          //   // Example threshold
           notificationService.localNotification(
             `Battery level has reached the preset limit of ${preset_level}%`,
           );
@@ -202,10 +211,11 @@ class Battron extends React.Component {
         type: 'drawable',
       },
       color: '#ff00ff',
-      linkingURI: 'myapp://home', // Deep linking
+      linkingURI: 'com.battron://battery-monitor', // Deep linking
       parameters: {
         delay: 60000, // 1-minute intervals
       },
+      foreground: true,
     };
 
     const start_battery_monitoring = async () => {
@@ -213,7 +223,11 @@ class Battron extends React.Component {
       console.log('Battery Monitoring in background started.');
     };
 
-    // if (!(await AsyncStorage.getItem('inactive'))) start_battery_monitoring();
+    try {
+      if (!(await AsyncStorage.getItem('inactive'))) start_battery_monitoring();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   componentWillUnmount = () => {};
