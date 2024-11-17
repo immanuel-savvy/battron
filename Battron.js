@@ -161,8 +161,12 @@ class Battron extends React.Component {
     this.logout = () => {
       this.setState({user: null}, () => AsyncStorage.removeItem('user'));
     };
+    this.update_user = user => {
+      this.setState({user});
+    };
     emitter.listen('login', this.login);
     emitter.listen('logout', this.logout);
+    emitter.listen('update_user', this.update_user);
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 80;
 

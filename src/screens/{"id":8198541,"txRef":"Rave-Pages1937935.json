@@ -1,39 +1,41 @@
 {
-  "id": 8198541,
-  "txRef": "Rave-Pages193793558373",
-  "flwRef": "FLW-MOCK-5ac393f274714c795b18b6b692c13905",
-  "orderRef": "URF_1731810050618_6381735",
-  "paymentPlan": 68329,
-  "paymentPage": 109448,
-  "createdAt": "2024-11-17T02:20:50.000Z",
-  "amount": 500,
-  "charged_amount": 500,
-  "status": "successful",
-  "IP": "54.75.161.64",
-  "currency": "NGN",
-  "appfee": 7,
-  "merchantfee": 0,
-  "merchantbearsfee": 1,
-  "charge_type": "normal",
-  "customer": {
-    "id": 2534791,
-    "phone": null,
-    "fullName": "immanuel savvy",
-    "customertoken": null,
-    "email": "immanuelsavvy@gmail.com",
-    "createdAt": "2024-11-17T02:20:50.000Z",
-    "updatedAt": "2024-11-17T02:20:50.000Z",
-    "deletedAt": null,
-    "AccountId": 1807105
-  },
-  "entity": {
-    "card6": "553188",
-    "card_last4": "2950",
-    "card_country_iso": "NG",
-    "createdAt": "2020-04-24T15:19:22.000Z"
+  "event": "charge.completed",
+  "data": {
+    "id": 8199257,
+    "tx_ref": "Rave-Pages818334743551",
+    "flw_ref": "FLW-MOCK-a0c24899f7984213598c3cbc44a6529f",
+    "device_fingerprint": "c5faf3c5fbd94e4174d2842674e43cf9",
+    "amount": 500,
+    "currency": "NGN",
+    "charged_amount": 500,
+    "app_fee": 7,
+    "merchant_fee": 0,
+    "processor_response": "successful",
+    "auth_model": "PIN",
+    "ip": "52.209.154.143",
+    "narration": "CARD Transaction ",
+    "status": "successful",
+    "payment_type": "card",
+    "created_at": "2024-11-17T11:25:02.000Z",
+    "account_id": 1807105,
+    "customer": {
+      "id": 2534892,
+      "name": "Immanuel Savvy",
+      "phone_number": null,
+      "email": "immanuel_giwa@yahoo.com",
+      "created_at": "2024-11-17T11:25:01.000Z"
+    },
+    "card": {
+      "first_6digits": "553188",
+      "last_4digits": "2950",
+      "issuer": "MASTERCARD  CREDIT",
+      "country": "NG",
+      "type": "MASTERCARD",
+      "expiry": "09/32"
+    }
   },
   "event.type": "CARD_TRANSACTION",
-  "_id": "logs~BWuQKgA9vW2VKSmPNAVs~1731810063454",
-  "created": 1731810063454,
-  "updated": 1731810063454
+  "_id": "logs~VgcouRTbLfGZQA44op~1731842712527",
+  "created": 1731842712527,
+  "updated": 1731842712527
 }

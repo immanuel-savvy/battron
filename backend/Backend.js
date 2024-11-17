@@ -17,12 +17,15 @@ app.get('/', (req, res) => res.send('<div><h1>Hi, its Battron.</h1></div>'));
 
 let pricing = {
   500: 'monthly',
-  3000: 'annually',
+  5000: 'annually',
 };
 app.post('/flutterwave_hook', (req, res) => {
+  // if()
+
   LOGS.write(req.body);
 
-  let {customer, amount, paymentPlan: payment_plan, status} = req.body;
+  let {data} = req.body;
+  let {customer, amount, paymentPlan: payment_plan, status} = data;
   if (status === 'successful') {
     let type = pricing[amount];
 
@@ -40,6 +43,14 @@ app.post('/flutterwave_hook', (req, res) => {
     USER_PAYMENTS.write({user: user._id, payment: resp._id, type});
     USERS.update(user._id, {subscription: resp._id});
   }
+  res.end();
+});
+
+app.post('/cancel_subscription', (req, res) => {
+  let {user} = req.body;
+  console.log(req.body, user);
+  USERS.update(user, {subscription: null});
+
   res.end();
 });
 
