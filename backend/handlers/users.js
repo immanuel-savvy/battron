@@ -117,14 +117,14 @@ const signup = (req, res) => {
 };
 
 const request_otp = (req, res) => {
-  let {email} = req.body;
+  let {email, subject} = req.body;
 
   let code = generate_random_string(6);
   email_verification_codes[email.trim().toLowerCase()] = code;
 
   send_mail({
     recipient: email,
-    subject: '[Battron] Please verify your email',
+    subject: subject || '[Battron] Please verify your email',
     sender_name: 'Battron',
     html: verification(code),
   });
@@ -174,9 +174,7 @@ const verify_email = (req, res) => {
   email = email && email.trim().toLowerCase();
   verification_code = verification_code && verification_code.trim();
 
-  console.log(email, verification_code);
   let code = email_verification_codes[email];
-  console.log(code);
 
   if (!code || code !== verification_code)
     return res.json({
@@ -213,6 +211,23 @@ const login = (req, res) => {
   res.json({ok: true, message: 'user logged-in', data: user});
 };
 
+const update_password = (req, res) => {
+  let {email, password} = req.body;
+
+  let user = USERS.readone({email: email.toLowerCase()});
+
+  if (!user)
+    return res.json({
+      ok: false,
+      message: 'user not found',
+      data: 'User not found',
+    });
+
+  USERS_HASH.update({user: user._id}, {key: password});
+
+  res.json({ok: true, data: user});
+};
+
 export {
   signup,
   login,
@@ -222,6 +237,7 @@ export {
   verify_email,
   to_title,
   update_user,
+  update_password,
   request_otp,
   users,
 };

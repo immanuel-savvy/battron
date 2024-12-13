@@ -46,7 +46,7 @@ class Signup extends React.Component {
     }
 
     this.setState({loading: false}, () =>
-      navigation.navigate('verify_otp', {email: res.email, user: res._id}),
+      navigation.navigate('confirm_otp', {email: res.email, user: res}),
     );
   };
 
@@ -59,30 +59,36 @@ class Signup extends React.Component {
       <Bg_view flex>
         <ScrollView>
           <Bg_view flex>
-            <Icon
-              component={<Feather name="arrow-left" size={wp(7.5)} />}
-              style={{padding: wp(4)}}
-              action={navigation.goBack}
-            />
-            <Bg_view style={{alignItems: 'center'}}>
+            <View
+              style={{
+                borderRadius: wp(7),
+                backgroundColor: '#F1F5F9',
+                height: wp(12),
+                width: wp(12),
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: wp(4),
+              }}>
               <Icon
-                icon={require('../assets/icons/logo_battron.png')}
-                style={{height: hp(20), width: wp(50)}}
+                component={<Feather name="arrow-left" size={wp(7.5)} />}
+                action={navigation.goBack}
               />
-            </Bg_view>
+            </View>
+
             <Bg_view style={{padding: wp(4)}}>
               <Fr_text
+                centralise
                 style={{
                   fontWeight: 'bold',
-                  fontSize: wp(5.6),
+                  fontSize: wp(6.5),
                   marginBottom: hp(4),
                 }}>
-                Create your account
+                Register
               </Fr_text>
 
               <Bg_view>
                 <Fr_text style={{marginBottom: hp(1.5), fontSize: wp(3.8)}}>
-                  Email Address
+                  Email
                 </Fr_text>
                 <TextInput
                   placeholder="Enter your email..."
@@ -127,7 +133,7 @@ class Signup extends React.Component {
                 </Bg_view>
                 <Bg_view style={{marginLeft: wp(1.5)}} flex>
                   <Fr_text style={{marginBottom: hp(1.5), fontSize: wp(3.8)}}>
-                    Re-type Password
+                    Confirm Password
                   </Fr_text>
                   <TextInput
                     placeholder="Confirm password..."
@@ -166,9 +172,9 @@ class Signup extends React.Component {
                 <View>
                   <Bg_view
                     style={{
-                      borderRadius: wp(2.8),
+                      borderRadius: wp(4),
                       backgroundColor: '#52AE27',
-                      height: hp(7.5),
+                      height: hp(7 - 0.5),
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
@@ -187,6 +193,27 @@ class Signup extends React.Component {
                   </Bg_view>
                 </View>
               </TouchableNativeFeedback>
+
+              <Bg_view
+                style={{alignItems: 'center', marginVertical: hp(1.4)}}
+                flex>
+                <Fr_text opacity={0.8} style={{marginVertical: hp(1.4)}}>
+                  Or proceed with
+                </Fr_text>
+
+                <TouchableNativeFeedback
+                  onPress={() => console.log('login with google')}>
+                  <View
+                    style={{
+                      borderRadius: wp(2.8),
+                      borderColor: '#ccc',
+                      borderWidth: 1,
+                      padding: wp(4),
+                    }}>
+                    <Icon icon={require('../assets/icons/Google.png')} />
+                  </View>
+                </TouchableNativeFeedback>
+              </Bg_view>
             </Bg_view>
 
             <Bg_view

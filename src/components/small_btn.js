@@ -21,6 +21,7 @@ class Small_btn extends React.Component {
       style,
       loading,
       icon,
+      color,
       right_icon,
       inner_padding_null,
     } = this.props;
@@ -53,6 +54,7 @@ class Small_btn extends React.Component {
                     : '#52AE27'
                   : null,
                 ...style,
+                flex: 0,
                 padding: inner_padding_null ? 0 : undefined,
               }}>
               {right_icon}
@@ -60,7 +62,7 @@ class Small_btn extends React.Component {
                 bold
                 size={wp(4)}
                 caps
-                color="#fff"
+                color={color || '#fff'}
                 accent={inverted && !disabled ? '#52AE27' : null}>
                 {title}
               </Fr_text>

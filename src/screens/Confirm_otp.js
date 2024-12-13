@@ -13,34 +13,42 @@ import Icon from '../components/icon';
 import Feather from 'react-native-vector-icons/Feather';
 import {post_request} from '../utils/services';
 import {email_regex} from '../utils/functions';
+import Text_btn from '../components/text_btn';
+import {emitter} from '../../Battron';
 
-class Reset_password extends React.Component {
+class Confirm_otp extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    let {email, user} = this.props.route.params || {};
+    this.state = {email, code: '', user};
   }
 
-  request_code = async () => {
-    let {email, loading} = this.state;
+  confirm = async () => {
+    let {code, email, user, loading} = this.state;
     let {navigation} = this.props;
 
     if (loading) return;
     this.setState({loading: true});
 
-    await post_request('request_otp', {
+    let res = await post_request('verify_email', {
+      verification_code: code,
       email,
-      subject: 'Reset Password',
     });
 
+    if (!res._id) {
+      return this.setState({message: 'Invalid Code!', loading: false});
+    }
     this.setState({loading: false});
-    navigation.navigate('confirm_otp', {email: email.toLowerCase()});
+    user
+      ? emitter.emit('login', {...res, first: true})
+      : navigation.navigate('update_password', {email});
   };
 
   render() {
     let {navigation} = this.props;
-    let {email, loading} = this.state;
-    let ready = email_regex.test(email);
+    let {code, email, user, message, loading} = this.state;
+    let ready = code.trim().length === 6 && !isNaN(Number(code.trim()));
 
     return (
       <Bg_view flex>
@@ -70,40 +78,52 @@ class Reset_password extends React.Component {
                   fontSize: wp(6.5),
                   marginBottom: hp(4),
                 }}>
-                Forgot Password
+                Verify Account
               </Fr_text>
               <Fr_text
                 centralise
                 color="#888"
                 style={{marginBottom: hp(2.8)}}
                 size={wp(3.8)}>
-                No worries! Enter your email address below and we will send you
-                a code to reset password.
+                {`Code has been sent to ${email}.\nEnter the code to verify your account.`}
               </Fr_text>
 
               <Bg_view>
                 <Fr_text style={{marginBottom: hp(1.5), fontSize: wp(3.8)}}>
-                  Email
+                  Enter Code
                 </Fr_text>
                 <TextInput
-                  placeholder="Enter your email..."
+                  placeholder="- - - - - -"
                   placeholderTextColor="#ccc"
-                  value={email}
-                  onChangeText={email => this.setState({email})}
+                  value={code}
+                  keyboardType="decimal-pad"
+                  onChangeText={code => this.setState({code, message: ''})}
                   style={{
                     borderRadius: wp(2.8),
                     borderColor: '#52AE27',
                     borderWidth: 1,
                     color: '#333',
+                    textAlign: 'center',
                     paddingHorizontal: wp(2.8),
                     justifyContent: 'center',
                   }}
                 />
+                <Bg_view>
+                  <Text_btn
+                    icon_component={
+                      <Feather name="info" size={wp(4.5)} color="red" />
+                    }
+                    text={message}
+                    italic
+                    size={wp(3.5)}
+                    color="red"
+                  />
+                </Bg_view>
               </Bg_view>
 
               <Bg_view style={{marginTop: hp(4)}}>
                 <TouchableNativeFeedback
-                  onPress={this.request_code}
+                  onPress={this.confirm}
                   disabled={!ready}>
                   <View>
                     <Bg_view
@@ -123,13 +143,24 @@ class Reset_password extends React.Component {
                             color: '#fff',
                             fontWeight: 'bold',
                           }}>
-                          Request Code
+                          Confirm
                         </Fr_text>
                       )}
                     </Bg_view>
                   </View>
                 </TouchableNativeFeedback>
               </Bg_view>
+              {user ? (
+                <Bg_view style={{alignItems: 'center', marginTop: hp(2.8)}}>
+                  <Text_btn
+                    centralise
+                    accent
+                    size={wp(4.5)}
+                    text="Skip"
+                    action={() => emitter.emit('login', {...user, first: true})}
+                  />
+                </Bg_view>
+              ) : null}
             </Bg_view>
           </Bg_view>
         </ScrollView>
@@ -138,4 +169,4 @@ class Reset_password extends React.Component {
   }
 }
 
-export default Reset_password;
+export default Confirm_otp;

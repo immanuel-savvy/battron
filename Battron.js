@@ -25,7 +25,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {get_request} from './src/utils/services';
 import Feather from 'react-native-vector-icons/Feather';
 import BackgroundActions from 'react-native-background-actions';
-import DeviceBattery from 'react-native-device-battery';
+import Onboarding from './src/screens/Onboarding';
+import Entry from './src/screens/Entry';
+import Reset_password from './src/screens/Reset_password';
+import Confirm_otp from './src/screens/Confirm_otp';
+import Update_password from './src/screens/Update_password';
 
 const emitter = new Emitter();
 
@@ -45,15 +49,20 @@ class Auth_stack_entry extends React.Component {
   render = () => {
     return (
       <Auth_stack.Navigator
-        initialRouteName="login"
+        initialRouteName="onboarding"
         screenOptions={{
           headerShown: false,
           keyboardHandlingEnabled: true,
           gestureEnabled: true,
           animationEnabled: true,
         }}>
+        <Auth_stack.Screen name="onboarding" component={Onboarding} />
+        <Auth_stack.Screen name="entry" component={Entry} />
         <Auth_stack.Screen name="login" component={Login} />
         <Auth_stack.Screen name="verify_otp" component={Verify_otp} />
+        <Auth_stack.Screen name="reset_password" component={Reset_password} />
+        <Auth_stack.Screen name="confirm_otp" component={Confirm_otp} />
+        <Auth_stack.Screen name="update_password" component={Update_password} />
         <Auth_stack.Screen name="signup" component={Signup} />
       </Auth_stack.Navigator>
     );

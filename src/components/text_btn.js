@@ -17,6 +17,7 @@ const Text_btn = ({
   color,
   italic,
   long_action,
+  icon_component,
   icon,
 }) =>
   !text && !icon ? null : (
@@ -31,7 +32,13 @@ const Text_btn = ({
           padding: wp(1.4),
           ...style,
         }}>
-        {icon ? <Icon style={{marginRight: wp(1.4)}} icon={icon} /> : null}
+        {icon || icon_component ? (
+          <Icon
+            component={icon_component}
+            style={{marginRight: wp(1.4)}}
+            icon={icon}
+          />
+        ) : null}
         <Fr_text
           centralise={centralise}
           accent={accent}
