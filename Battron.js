@@ -104,6 +104,9 @@ class Bottom_tabs_entry extends React.Component {
         backBehavior="initial"
         screenOptions={{
           headerShown: false,
+          tabBarStyle: {
+            backgroundColor: '#000',
+          },
           tabBarActiveTintColor: '#52AE27',
           /* tabBarInactiveTintColor: '#858597', */
         }}>

@@ -72,7 +72,9 @@ class Login extends React.Component {
                 margin: wp(4),
               }}>
               <Icon
-                component={<Feather name="arrow-left" size={wp(7.5)} />}
+                component={
+                  <Feather color="#000" name="arrow-left" size={wp(7.5)} />
+                }
                 action={navigation.goBack}
               />
             </View>

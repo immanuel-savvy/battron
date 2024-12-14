@@ -48,14 +48,14 @@ app.post('/flutterwave_hook', (req, res) => {
 
 app.post('/cancel_subscription', (req, res) => {
   let {user} = req.body;
-  console.log(req.body, user);
+
   USERS.update(user, {subscription: null});
 
   res.end();
 });
 
-app.listen(1450, () => {
+app.listen(1451, () => {
   ds_conn();
 
-  console.log('Battron Backend started on :1450');
+  console.log('Battron Backend started on :1451');
 });

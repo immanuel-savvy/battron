@@ -23,6 +23,7 @@
     "react-native-background-fetch": "^4.2.5",
     "react-native-device-battery": "^2.1.0",
     "react-native-gesture-handler": "^2.17.1",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-modal": "^13.0.1",
     "react-native-pager-view": "^6.1.2",
     "react-native-push-notification": "^8.1.1",

@@ -4,9 +4,9 @@ let PRD = !DEV;
 let domain = `${
   PRD
     ? 'https://api.battron.tech'
-    : false
-    ? 'http://192.168.43.203:1450'
-    : 'http://10.0.2.2:1450'
+    : true
+    ? 'http://192.168.175.11:1451'
+    : 'http://10.0.2.2:1451'
 }`;
 
 const get_request = async path => {
