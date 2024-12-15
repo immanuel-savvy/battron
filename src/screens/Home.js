@@ -11,7 +11,6 @@ import {hp, wp} from '../utils/dimensions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import Text_btn from '../components/text_btn';
-import Header from '../components/header';
 import DeviceBattery from 'react-native-device-battery';
 import {notificationService} from '../utils/notification_service';
 import Icon from '../components/icon';
