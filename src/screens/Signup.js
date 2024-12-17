@@ -28,6 +28,7 @@ class Signup extends React.Component {
     let {navigation} = this.props;
     let {email, password, confirm_password, loading} = this.state;
     if (loading) return;
+    email = email?.trim();
 
     if (!email_regex.test(email))
       return this.setState({message: 'Invalid email'});

@@ -24,7 +24,10 @@ app.post('/flutterwave_hook', (req, res) => {
 
   LOGS.write(req.body);
 
-  let {data} = req.body;
+  let {data, event} = req.body;
+  if (!event) {
+    data = req.body;
+  }
   let {customer, amount, paymentPlan: payment_plan, status} = data;
   if (status === 'successful') {
     let type = pricing[amount];

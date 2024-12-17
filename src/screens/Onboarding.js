@@ -96,6 +96,10 @@ class Onboarding extends React.Component {
           />
           <Image
             style={{width: wp(), flex: 1}}
+            source={require('../assets/images/on2.jpg')}
+          />
+          <Image
+            style={{width: wp(), flex: 1}}
             source={require('../assets/images/onboard2.png')}
           />
           <Image

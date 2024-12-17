@@ -1,11 +1,11 @@
-let DEV = true;
+let DEV = false;
 let PRD = !DEV;
 
 let domain = `${
   PRD
     ? 'https://api.battron.tech'
     : true
-    ? 'http://192.168.175.11:1451'
+    ? 'http://192.168.21.11:1451'
     : 'http://10.0.2.2:1451'
 }`;
 

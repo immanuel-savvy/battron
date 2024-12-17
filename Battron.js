@@ -154,9 +154,6 @@ class Battron extends React.Component {
 
   componentDidMount = async () => {
     let start = Date.now();
-    await this.requestNotificationPermission();
-
-    notificationService.configure();
 
     let user = await AsyncStorage.getItem('user');
     if (user) user = await get_request(`user/${user}`);
@@ -166,6 +163,7 @@ class Battron extends React.Component {
     let diff = Date.now() - start;
     let wait = 3000 - diff;
     if (wait < 0) wait = 0;
+
     setTimeout(() => {
       this.setState({loading: false});
     }, wait);
@@ -185,6 +183,12 @@ class Battron extends React.Component {
     emitter.listen('login', this.login);
     emitter.listen('logout', this.logout);
     emitter.listen('update_user', this.update_user);
+
+    try {
+      await this.requestNotificationPermission();
+
+      notificationService.configure();
+    } catch (e) {}
 
     let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 80;
 
@@ -240,6 +244,8 @@ class Battron extends React.Component {
     } catch (e) {
       console.log(e);
     }
+
+    emitter.listen('start_monitoring', start_battery_monitoring);
   };
 
   componentWillUnmount = () => {};

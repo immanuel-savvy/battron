@@ -25,6 +25,8 @@ class Reset_password extends React.Component {
     let {email, loading} = this.state;
     let {navigation} = this.props;
 
+    email = email?.trim();
+
     if (loading) return;
     this.setState({loading: true});
 

@@ -13,13 +13,14 @@ class Cool_modal extends React.Component {
   toggle = () => this.setState({show_modal: !this.state.show_modal});
 
   render = () => {
-    let {children, height, flex, center, no_swipe} = this.props;
+    let {children, height, flex, center, no_swipe, clear} = this.props;
     let {show_modal} = this.state;
 
     return (
       <Modal
         isVisible={show_modal}
-        backdropColor="#fff"
+        backdropOpacity={clear ? 0 : undefined}
+        backdropColor={'#fff'}
         deviceHeight={height}
         onBackdropPress={this.toggle}
         swipeDirection={no_swipe ? null : center ? 'right' : 'down'}

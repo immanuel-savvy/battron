@@ -1,0 +1,39 @@
+{
+  "id": 8274371,
+  "txRef": "Rave-Pages941191441849",
+  "flwRef": "FLW-MOCK-fefa210a1e518ffc0ce3a0fcc49b1522",
+  "orderRef": "URF_1734409879542_3721435",
+  "paymentPlan": 71082,
+  "paymentPage": 111447,
+  "createdAt": "2024-12-17T04:31:19.000Z",
+  "amount": 6163.36,
+  "charged_amount": 6163.36,
+  "status": "successful",
+  "IP": "52.209.154.143",
+  "currency": "NGN",
+  "appfee": 86.29,
+  "merchantfee": 0,
+  "merchantbearsfee": 1,
+  "charge_type": "normal",
+  "customer": {
+    "id": 2559149,
+    "phone": null,
+    "fullName": "Immanuel Savvy",
+    "customertoken": null,
+    "email": "immanuelsavvy@gmail.com",
+    "createdAt": "2024-12-17T04:31:19.000Z",
+    "updatedAt": "2024-12-17T04:31:19.000Z",
+    "deletedAt": null,
+    "AccountId": 2535259
+  },
+  "entity": {
+    "card6": "553188",
+    "card_last4": "2950",
+    "card_country_iso": "NG",
+    "createdAt": "2020-04-24T15:19:22.000Z"
+  },
+  "event.type": "CARD_TRANSACTION",
+  "_id": "logs~U9kvHBDKryiT2ZAtHLJy0I1N~1734409887901",
+  "created": 1734409887901,
+  "updated": 1734409887901
+}

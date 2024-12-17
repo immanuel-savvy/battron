@@ -92,7 +92,8 @@ const signup = (req, res) => {
 
     USERS_HASH.update({user: user._id}, {key});
   } else {
-    let result = USERS.write(user);
+    user.start = Date.now();
+    let result = USERS.write({...user});
     user._id = result._id;
     user.created = result.created;
 

@@ -8,6 +8,7 @@ import {
   Linking,
   ScrollView,
   TouchableNativeFeedback,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import Fr_text from '../components/fr_text';
@@ -45,6 +46,8 @@ class Subscribe extends React.Component {
 
     get_size();
   };
+
+  trial_period = 3 * 24 * 3600 * 1000;
 
   sub_duration = subscription => {
     let {type, created} = subscription;
@@ -99,6 +102,10 @@ class Subscribe extends React.Component {
 
   toggle_cancel = () => this.mod?.toggle();
 
+  annual_period = 365 * 24 * 3600 * 1000;
+
+  monthly_period = 30 * 24 * 3600 * 1000;
+
   render() {
     let {navigation} = this.props;
     let {sub_type, loading, dynamic_height} = this.state;
@@ -107,13 +114,13 @@ class Subscribe extends React.Component {
       <App_data.Consumer>
         {({user}) => {
           this.user = user;
-          // if (user) user.subscription = null;
+
           return (
             <Bg_view
               flex
               style={{
                 paddingBottom: 0,
-                backgroundColor: '#000',
+                backgroundColor: '#52AE27',
               }}>
               <ImageBackground source={require('../assets/images/sub_bg.png')}>
                 {/* <Header title="subscribe" navigation={navigation} /> */}
@@ -130,6 +137,13 @@ class Subscribe extends React.Component {
                     <Fr_text color="#fff" size={wp(6.7)} bold>
                       Choose Your Plan
                     </Fr_text>
+                    <Fr_text
+                      color="#fff"
+                      size={wp(5)}
+                      style={{marginTop: hp(1.4)}}
+                      bold>
+                      Unlock The Full App and Gain:
+                    </Fr_text>
                   </Bg_view>
 
                   <Bg_view no_bg style={{alignItems: 'flex-end'}}>
@@ -144,7 +158,10 @@ class Subscribe extends React.Component {
                   </Bg_view>
                 </Bg_view>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                  <Bg_view no_bg style={{padding: wp(5.6)}} flex>
+                  <Bg_view
+                    no_bg
+                    style={{padding: wp(5.6), marginBottom: hp(10)}}
+                    flex>
                     <Bg_view style={{padding: wp(1), paddingTop: hp(4)}} no_bg>
                       {[
                         'Full charge alert',
@@ -178,49 +195,79 @@ class Subscribe extends React.Component {
                     </Bg_view>
 
                     {user?.subscription ? (
-                      <Bg_view no_bg style={{alignSelf: 'center'}}>
-                        <TouchableNativeFeedback onPress={() => {}}>
-                          <View>
+                      <Bg_view
+                        no_bg
+                        style={{alignSelf: 'center', marginTop: hp(4)}}>
+                        <TouchableNativeFeedback
+                          onPress={() => this.setState({sub_type: 'monthly'})}>
+                          <View style={{}}>
                             <Bg_view
                               style={{
-                                width: wp(40),
-                                alignItems: 'center',
+                                backgroundColor:
+                                  sub_type === 'monthly'
+                                    ? '#52AE27'
+                                    : 'rgba(0,0,0,0)',
+                                borderWidth: 2,
+                                borderColor:
+                                  sub_type !== 'monthly'
+                                    ? '#52AE27'
+                                    : 'rgba(0,0,0,0)',
                                 paddingVertical: hp(4),
                                 borderRadius: wp(4.5),
-                                backgroundColor: '#52AE27',
-                              }}>
-                              <Fr_text capitalise color="#fff" bold>
-                                {user?.subscription?.type || 'Annually'}
-                              </Fr_text>
-                              <Bg_view
-                                no_bg
-                                style={{
-                                  height: hp(1),
-                                  borderBottomColor: '#fff',
-                                  borderBottomWidth: 1,
-                                  marginVertical: hp(2),
-                                  width: '100%',
-                                }}></Bg_view>
-
-                              <Fr_text color="#fff">
-                                NGN {user.subscription.amount}
-                              </Fr_text>
-                            </Bg_view>
-                            <Bg_view
-                              style={{
+                                width: wp(42),
                                 paddingHorizontal: wp(2.8),
-                                paddingBottom: 0,
-                                height: hp(4),
-                                borderRadius: wp(4),
-                                backgroundColor: '#B55959',
-                                alignSelf: 'center',
-                                justifyContent: 'center',
-                                position: 'absolute',
-                                top: -10,
+                                minHeight: hp(38),
                               }}>
-                              <Fr_text color="#fff" bold>
-                                Running
+                              <Fr_text
+                                style={{fontSize: wp(5)}}
+                                bold
+                                color="#fff">
+                                Monthly
                               </Fr_text>
+                              <LinearGradient
+                                start={{x: 0, y: 0}}
+                                end={{x: 1, y: 0}}
+                                colors={['yellow', '#D12E34']}
+                                style={{
+                                  backgroundColor: 'yellow',
+                                  borderRadius: wp(2.8),
+                                  paddingHorizontal: wp(2.8),
+                                  alignSelf: 'flex-start',
+                                }}>
+                                <Fr_text
+                                  size={wp(3.5)}
+                                  style={{textTransform: 'uppercase'}}>
+                                  Running
+                                </Fr_text>
+                              </LinearGradient>
+
+                              <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                                <Fr_text color="#fff" size={wp(3.5)}>
+                                  Till:{' '}
+                                  {`${new Date(
+                                    user.subscription.updated +
+                                      (user.subscription.amount < 8000
+                                        ? this.monthly_period
+                                        : this.annual_period),
+                                  ).toDateString()}`}
+                                </Fr_text>
+                              </Bg_view>
+                              <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                                <Fr_text color="#fff">
+                                  <Fr_text color="#fff" size={wp(6)} bold>
+                                    $3.99
+                                  </Fr_text>
+                                </Fr_text>
+                              </Bg_view>
+
+                              <Bg_view no_bg style={{marginTop: hp(3)}}>
+                                <Fr_text color="#fff" size={wp(3.5)}>
+                                  * Date:{' '}
+                                  {new Date(
+                                    user.subscription.updated,
+                                  ).toDateString()}
+                                </Fr_text>
+                              </Bg_view>
                             </Bg_view>
                           </View>
                         </TouchableNativeFeedback>
@@ -428,6 +475,34 @@ class Subscribe extends React.Component {
                           action={this.toggle_cancel}
                         />
                       </Bg_view>
+                    ) : user.start + this.trial_period >= Date.now() ? (
+                      <TouchableWithoutFeedback
+                        onPress={() => navigation.navigate('home')}>
+                        <View>
+                          <Bg_view
+                            style={{
+                              borderRadius: wp(5),
+                              backgroundColor: '#fff',
+                              marginTop: hp(2.8),
+                              alignSelf: 'center',
+                              paddingVertical: hp(1.4),
+                              paddingHorizontal: wp(4),
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}>
+                            <Fr_text
+                              accent
+                              bold
+                              style={{
+                                fontSize: wp(4.5),
+                                color: '#fff',
+                                fontWeight: 'bold',
+                              }}>
+                              Continue Free-Trial
+                            </Fr_text>
+                          </Bg_view>
+                        </View>
+                      </TouchableWithoutFeedback>
                     ) : null}
 
                     <Fr_text
@@ -497,7 +572,8 @@ class Subscribe extends React.Component {
                     <Fr_text
                       style={{marginTop: hp(4), marginBottom: hp(2.8)}}
                       centralise>
-                      Are you sure you want to unsubscribe?
+                      Are you sure you want to unsubscribe? Your subscription
+                      would remain active till it is exhausted.
                     </Fr_text>
 
                     <Bg_view horizontal style={{justifyContent: 'center'}}>

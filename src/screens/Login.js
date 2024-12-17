@@ -31,6 +31,7 @@ class Login extends React.Component {
     let {email, password, loading} = this.state;
     if (loading) return;
 
+    email = email?.trim();
     if (!email_regex.test(email))
       return this.setState({message: 'Invalid email'});
     if (!password) return this.setState({message: 'Password cannot be blank'});
@@ -44,13 +45,7 @@ class Login extends React.Component {
         loading: false,
       });
 
-    if (!res?.verified) {
-      await post_request(`request_otp`, {email, user: res._id});
-      navigation.navigate('verify_otp', {email, _id: res._id});
-      this.setState({loading: false});
-    } else {
-      emitter.emit('login', res);
-    }
+    emitter.emit('login', res);
   };
 
   render() {
@@ -208,11 +203,17 @@ class Login extends React.Component {
                   <View
                     style={{
                       borderRadius: wp(2.8),
-                      borderColor: '#ccc',
+                      borderColor: '#eee',
+                      shadowColor: '#ccc',
+                      elevation: 1,
+                      // shadowOpacity: 0.1,
                       borderWidth: 1,
                       padding: wp(4),
                     }}>
-                    <Icon icon={require('../assets/icons/Google.png')} />
+                    <Icon
+                      icon={require('../assets/icons/Google.png')}
+                      style={{borderRadius: wp(2.8)}}
+                    />
                   </View>
                 </TouchableNativeFeedback>
               </Bg_view>

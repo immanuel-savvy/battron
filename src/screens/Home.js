@@ -17,6 +17,8 @@ import Icon from '../components/icon';
 import {App_data} from '../../Contexts';
 import Feather from 'react-native-vector-icons/Feather';
 import BackgroundActions from 'react-native-background-actions';
+import Cool_modal from '../components/cool_modal';
+import {emitter} from '../../Battron';
 
 class Home extends React.Component {
   constructor(props) {
@@ -38,10 +40,14 @@ class Home extends React.Component {
 
   start = async () => {
     let {BatteryModule} = NativeModules;
-    let battery_level = await BatteryModule.getBatteryPercentage();
+    let battery_level = Math.round(await BatteryModule.getBatteryPercentage());
     this.setState({battery_level});
 
-    let inactive = await AsyncStorage.getItem('inactive');
+    let inactive =
+      !this.user.subscription &&
+      this.user.start + this.trial_period < Date.now()
+        ? false
+        : await AsyncStorage.getItem('inactive');
 
     let selected_tone = await AsyncStorage.getItem('selected_tone');
     this.setState({deactivated: inactive, selected_tone});
@@ -86,12 +92,19 @@ class Home extends React.Component {
 
     if (!inactive) {
       this.sub = DeviceBattery.addListener(this.onBatteryStateChanged);
+      emitter.emit('start_listening');
     } else {
       this.sub?.remove();
     }
   };
 
   componentDidMount = async () => {
+    setTimeout(() => {
+      if (this.user.first || !this.user.subscription) {
+        this.props.navigation.navigate('subscribe');
+      }
+    }, 10);
+
     await this.start();
   };
 
@@ -129,21 +142,29 @@ class Home extends React.Component {
     await BackgroundActions.stop();
   };
 
+  trial_period = 3 * 24 * 3600 * 1000;
+
   toggle_activation = async () => {
+    let {deactivated} = this.state;
     if (
-      !this.user?.subscription_running &&
-      this.user?.email !== 'immanuelsavvy@gmail.com'
+      !deactivated &&
+      !this.user?.subscription &&
+      !['immanuelsavvy@gmail.com', 'ewaoluwatoyosi@yahoo.com'].includes(
+        this.user?.email,
+      )
     ) {
-      return this.props.navigation.navigate('subscribe');
+      if (this.user.start + this.trial_period < Date.now()) {
+        return this.props.navigation.navigate('subscribe');
+      }
     }
-    this.setState({deactivated: !this.state.deactivated, loading: true}, () => {
+    // this.anim.toggle();
+    this.setState({deactivated: !deactivated, loading: true}, () => {
       let {deactivated} = this.state;
 
       if (deactivated) {
         AsyncStorage.setItem('inactive', 'true');
         notificationService.stopAlarm();
         BackgroundActions.stop();
-        DeviceBattery.removeLis;
       } else {
         AsyncStorage.removeItem('inactive');
         this.start();
@@ -151,7 +172,8 @@ class Home extends React.Component {
     });
     setTimeout(() => {
       this.setState({loading: false});
-    }, 2500);
+      // this.anim.toggle();
+    }, 2000);
   };
 
   set_chime = tone => {
@@ -167,16 +189,12 @@ class Home extends React.Component {
   render() {
     let {
       preset_battery_level,
-      loading,
-      hidden,
-      fully_charged,
       deactivated,
       battery_level,
       charging,
       selected_tone,
-      charge_loading,
+      loading,
     } = this.state;
-    let {navigation} = this.props;
 
     return (
       <App_data.Consumer>
@@ -212,10 +230,7 @@ class Home extends React.Component {
                   <Bg_view />
                 </TouchableNativeFeedback>
               </Bg_view>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                /* contentContainerStyle={{flex: 1}} */
-              >
+              <ScrollView showsVerticalScrollIndicator={false}>
                 <Bg_view no_bg style={{padding: wp(5)}} horizontal>
                   <Bg_view no_bg flex style={{alignItems: 'center'}}>
                     <Icon
@@ -292,7 +307,7 @@ class Home extends React.Component {
                                 borderRadius: wp(2.8),
                                 borderColor: colr,
                                 borderWidth:
-                                  Number(m) === preset_battery_level ? 1 : 0,
+                                  Number(m) === preset_battery_level ? 2.5 : 0,
                                 marginBottom: 10,
                                 minHeight: hp(7),
                                 justifyContent: 'center',
@@ -335,17 +350,35 @@ class Home extends React.Component {
                     style={{
                       alignItems: 'center',
                       justifyContent: 'center',
-                      paddingVertical: hp(4),
+                      paddingVertical: hp(1),
                     }}
                     no_bg>
-                    <Text_btn
-                      centralise
-                      color="#fff"
-                      size={wp(10)}
-                      bold
-                      text={deactivated ? 'Activate' : 'Deactivate'}
-                      action={this.toggle_activation}
-                    />
+                    {loading ? (
+                      <Icon
+                        icon={
+                          !deactivated
+                            ? require('../assets/icons/act.gif')
+                            : require('../assets/icons/deact.gif')
+                        }
+                        style={{
+                          width: wp(50),
+                          height: wp(50),
+                          borderRadius: wp(4),
+                          paddingVertical: 0,
+                          marginVertical: 0,
+                        }}
+                      />
+                    ) : (
+                      <Icon
+                        icon={
+                          deactivated
+                            ? require('../assets/images/act.png')
+                            : require('../assets/images/deact.png')
+                        }
+                        action={this.toggle_activation}
+                        style={{width: wp(50), height: wp(50)}}
+                      />
+                    )}
                   </Bg_view>
 
                   <Bg_view horizontal no_bg style={{marginVertical: hp(2.8)}}>
@@ -422,6 +455,40 @@ class Home extends React.Component {
                   </Bg_view>
                 </Bg_view>
               </ScrollView>
+
+              <Cool_modal
+                ref={anim => (this.anim = anim)}
+                toggle={this.close_anim}
+                center
+                clear>
+                <Bg_view no_bg>
+                  <Bg_view
+                    no_bg
+                    style={{
+                      // backgroundColor: '#000',
+                      elevation: 5,
+                      shadowColor: '#000',
+                      padding: wp(4),
+                      borderRadius: wp(2.8),
+                      marginBottom: hp(1.4),
+                      alignItems: 'center',
+                      marginHorizontal: wp(2.8),
+                    }}>
+                    <Icon
+                      icon={
+                        !deactivated
+                          ? require('../assets/icons/act.gif')
+                          : require('../assets/icons/deact.gif')
+                      }
+                      style={{
+                        width: wp(80),
+                        height: wp(80),
+                        borderRadius: wp(4),
+                      }}
+                    />
+                  </Bg_view>
+                </Bg_view>
+              </Cool_modal>
             </LinearGradient>
           );
         }}
