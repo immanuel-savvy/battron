@@ -19,22 +19,60 @@ import Feather from 'react-native-vector-icons/Feather';
 import BackgroundActions from 'react-native-background-actions';
 import Cool_modal from '../components/cool_modal';
 import {emitter} from '../../Battron';
+import Sound from 'react-native-sound';
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      preset_battery_level: 80,
+      preset_battery_level: 90,
       hidden: true,
     };
   }
+
+  new_sound = toneFile => {
+    this.sound = new Sound(toneFile, error => {
+      if (error) {
+        console.error('Failed to load sound', error);
+        return;
+      }
+
+      // Play the sound
+      this.sound.play(success => {
+        if (success) {
+          console.log('Sound finished playing');
+        } else {
+          console.error('Sound playback failed');
+        }
+        // Release the sound when finished
+        this.sound.release();
+      });
+    });
+  };
+
+  play_tone = toneFile => {
+    if (this.sound) {
+      this.sound.stop(() => {
+        this.sound.release();
+        this.sound = null;
+        this.new_sound(toneFile);
+      });
+    } else this.new_sound(toneFile);
+  };
+
+  sound_names = {
+    eco_chime: require('../assets/sounds/echo_chime.mp3'),
+    dog_barking: require('../assets/sounds/dog_barking.mp3'),
+    energy_save_alert: require('../assets/sounds/energy_save.wav'),
+  };
 
   send_notifications = (message, id) => {
     notificationService.localNotification(
       message ||
         `Battery level has reached the preset limit of ${this.state.preset_battery_level}%`,
       id,
+      this.sound_names[this.state.selected_tone],
     );
   };
 
@@ -78,7 +116,7 @@ class Home extends React.Component {
       if (battery_level !== this.state.battery_level)
         this.setState({battery_level});
 
-      if (battery_level >= (preset_battery_level || 80)) {
+      if (battery_level >= (preset_battery_level || 90)) {
         if (!played) this.send_notifications();
         this.setState({fully_charged: true});
       } else
@@ -109,7 +147,7 @@ class Home extends React.Component {
   };
 
   set_battery_level = level => {
-    this.setState({preset_battery_level: Number(level) || 80}, async () => {
+    this.setState({preset_battery_level: Number(level) || 90}, async () => {
       let {preset_battery_level} = this.state;
 
       await AsyncStorage.setItem(
@@ -287,7 +325,7 @@ class Home extends React.Component {
                     horizontal>
                     {this.maxs.map((m, i) => {
                       let colr =
-                        Number(m) === 80
+                        Number(m) === 90
                           ? '#D12E34'
                           : Number(m) === 90
                           ? '#52AE27'
@@ -403,7 +441,13 @@ class Home extends React.Component {
                     {this.alarm_tones().map((tone, i) => {
                       return (
                         <TouchableNativeFeedback
-                          onPress={() => this.set_chime(tone)}>
+                          onPress={() => {
+                            this.set_chime(tone);
+                            this.play_tone(
+                              this.sound_names[tone] ||
+                                require('../assets/sounds/energy_save.wav'),
+                            );
+                          }}>
                           <View>
                             <Bg_view
                               style={{
@@ -481,8 +525,8 @@ class Home extends React.Component {
                           : require('../assets/icons/deact.gif')
                       }
                       style={{
-                        width: wp(80),
-                        height: wp(80),
+                        width: wp(90),
+                        height: wp(90),
                         borderRadius: wp(4),
                       }}
                     />

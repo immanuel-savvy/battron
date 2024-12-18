@@ -37,7 +37,7 @@ class Onboarding extends React.Component {
   };
 
   renderPaginationDots = () => {
-    let pages = 3;
+    let pages = 4;
     let {activePage} = this.state;
 
     return (
@@ -56,7 +56,7 @@ class Onboarding extends React.Component {
   };
 
   startAutoSwipe = () => {
-    const totalPages = 3; // Total number of onboarding screens
+    const totalPages = 4; // Total number of onboarding screens
 
     this.autoSwipeInterval = setInterval(() => {
       this.setState(
@@ -90,22 +90,36 @@ class Onboarding extends React.Component {
           scrollEventThrottle={16}
           onScroll={this.onScroll}
           showsHorizontalScrollIndicator={false}>
-          <Image
-            style={{width: wp(), flex: 1}}
-            source={require('../assets/images/onboard1.png')}
-          />
-          <Image
-            style={{width: wp(), flex: 1}}
-            source={require('../assets/images/on2.jpg')}
-          />
-          <Image
-            style={{width: wp(), flex: 1}}
-            source={require('../assets/images/onboard2.png')}
-          />
-          <Image
-            style={{width: wp(), flex: 1}}
-            source={require('../assets/images/onboard3.png')}
-          />
+          <View style={{height: hp(), width: wp()}}>
+            <Image
+              style={{width: '100%', height: '100%'}}
+              source={require('../assets/images/onboard1.png')}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={{height: hp(), width: wp()}}>
+            <Image
+              style={{width: '100%', height: '100%'}}
+              source={require('../assets/images/onboard2.png')}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View style={{height: hp(), width: wp()}}>
+            <Image
+              style={{width: '100%', height: '100%'}}
+              source={require('../assets/images/onboard3.png')}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View style={{height: hp(), width: wp()}}>
+            <Image
+              style={{width: '100%', height: '100%'}}
+              source={require('../assets/images/onboard4.png')}
+              resizeMode="cover"
+            />
+          </View>
         </ScrollView>
 
         {this.renderPaginationDots()}

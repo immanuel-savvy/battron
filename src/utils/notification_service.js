@@ -40,7 +40,7 @@ class NotificationService {
     }
   };
 
-  localNotification = (message, id) => {
+  localNotification = (message, id, sound) => {
     PushNotification.localNotification({
       channelId: 'battery_stat',
       largeIcon: 'ic_launcher',
@@ -58,28 +58,32 @@ class NotificationService {
       allowWhileIdle: true,
     });
 
-    !id && this.playAlarm();
+    !id && this.playAlarm(sound);
   };
 
-  playAlarm = () => {
+  playAlarm = sound => {
     if (this.alarm) {
       this.alarm?.stop(() => {
         this.alarm?.release();
         this.alarm = null;
       });
     }
-    this.alarm = new Sound('alarm_sound.wav', Sound.MAIN_BUNDLE, error => {
-      if (error) {
-        console.log('Failed to load the sound', error);
-        return;
-      }
-      this.alarm?.setNumberOfLoops(-1);
-      this.alarm?.play(success => {
-        if (!success) {
-          console.log('Playback failed due to audio decoding errors');
+    this.alarm = new Sound(
+      sound || 'energy_save.wav',
+      Sound.MAIN_BUNDLE,
+      error => {
+        if (error) {
+          console.log('Failed to load the sound', error);
+          return;
         }
-      });
-    });
+        this.alarm?.setNumberOfLoops(-1);
+        this.alarm?.play(success => {
+          if (!success) {
+            console.log('Playback failed due to audio decoding errors');
+          }
+        });
+      },
+    );
   };
 
   stopAlarm = () => {

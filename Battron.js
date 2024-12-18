@@ -190,7 +190,7 @@ class Battron extends React.Component {
       notificationService.configure();
     } catch (e) {}
 
-    let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 80;
+    let preset_level = Number(await AsyncStorage.getItem('preset_level')) || 90;
 
     let {BatteryModule} = NativeModules;
 
