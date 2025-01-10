@@ -1,4 +1,4 @@
-import {USERS, USERS_HASH} from '../ds/conn';
+import {USERS, USERS_HASH, USER_PAYMENTS} from '../ds/conn';
 import nodemailer from 'nodemailer';
 import {generate_random_string} from 'generalised-datastore/utils/functions';
 import {verification} from './emails';
@@ -164,9 +164,11 @@ const update_user = (req, res) => {
 };
 
 const user = (req, res) => {
-  let {user_id} = req.params;
+  let query = req.query;
+  console.log(query);
 
-  res.json({ok: true, message: 'user fetched', data: USERS.readone(user_id)});
+  let payment = USER_PAYMENTS.read({user: query.email});
+  res.json({ok: true, message: 'user fetched', data: payment.slice(-1)[0]});
 };
 
 const verify_email = (req, res) => {

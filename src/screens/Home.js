@@ -72,7 +72,7 @@ class Home extends React.Component {
       message ||
         `Battery level has reached the preset limit of ${this.state.preset_battery_level}%`,
       id,
-      this.sound_names[this.state.selected_tone],
+      this.sound_names[this.state.selected_tone || 'energy_save_alert'],
     );
   };
 

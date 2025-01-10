@@ -32,19 +32,14 @@ app.post('/flutterwave_hook', (req, res) => {
   if (status === 'successful') {
     let type = pricing[amount];
 
-    let user = USERS.readone({email: customer.email});
-    if (!user) return res.end();
-
     let resp = SUBSCRIPTIONS.write({
       amount,
       status,
       email: customer.email,
-      user: user._id,
       type,
       payment_plan,
     });
-    USER_PAYMENTS.write({user: user._id, payment: resp._id, type});
-    USERS.update(user._id, {subscription: resp._id});
+    USER_PAYMENTS.write({user: customer.email, payment: resp});
   }
   res.end();
 });

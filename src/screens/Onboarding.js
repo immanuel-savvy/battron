@@ -10,6 +10,7 @@ import {
 import {wp, hp} from '../utils/dimensions';
 import Icon from '../components/icon';
 import Feather from 'react-native-vector-icons/Feather';
+import Fr_text from '../components/fr_text';
 
 class Onboarding extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class Onboarding extends React.Component {
 
     this.state = {
       active_dot: 0,
+      totalPages: 4,
     };
 
     this.scrollViewRef = React.createRef();
@@ -58,19 +60,19 @@ class Onboarding extends React.Component {
   startAutoSwipe = () => {
     const totalPages = 4; // Total number of onboarding screens
 
-    this.autoSwipeInterval = setInterval(() => {
-      this.setState(
-        prevState => ({
-          activePage: (prevState.activePage + 1) % totalPages,
-        }),
-        () => {
-          this.scrollViewRef.current.scrollTo({
-            x: wp() * this.state.activePage,
-            animated: true,
-          });
-        },
-      );
-    }, 3000); // Change screen every 3 seconds
+    // this.autoSwipeInterval = setInterval(() => {
+    //   this.setState(
+    //     prevState => ({
+    //       activePage: (prevState.activePage + 1) % totalPages,
+    //     }),
+    //     () => {
+    //       this.scrollViewRef.current.scrollTo({
+    //         x: wp() * this.state.activePage,
+    //         animated: true,
+    //       });
+    //     },
+    //   );
+    // }, 3000); // Change screen every 3 seconds
   };
 
   stopAutoSwipe = () => {
@@ -81,6 +83,8 @@ class Onboarding extends React.Component {
 
   render() {
     let {navigation} = this.props;
+    let {activePage, totalPages} = this.state;
+
     return (
       <Bg_view flex>
         <ScrollView
@@ -124,36 +128,61 @@ class Onboarding extends React.Component {
 
         {this.renderPaginationDots()}
 
-        <Bg_view
-          style={{
-            position: 'absolute',
-            bottom: hp(5),
-            right: wp(10),
-            height: wp(15),
-            width: wp(15),
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: wp(15),
-          }}>
-          <View style={{flex: 1}}>
-            <TouchableNativeFeedback
-              onPress={() => navigation.navigate('entry')}
-              style={{flex: 1}}>
-              <View
+        {activePage === totalPages - 1 ? (
+          <TouchableNativeFeedback
+            onPress={() => navigation.navigate('subscribe')}>
+            <View>
+              <Bg_view
                 style={{
-                  flex: 1,
+                  position: 'absolute',
+                  bottom: hp(16),
+                  right: wp(40),
+                  height: wp(12),
+                  width: wp(20),
                   justifyContent: 'center',
                   alignItems: 'center',
+                  borderRadius: wp(4),
                 }}>
-                <Icon
-                  component={
-                    <Feather name="arrow-right" size={wp(10)} color="#52AE27" />
-                  }
-                />
-              </View>
-            </TouchableNativeFeedback>
-          </View>
-        </Bg_view>
+                <Fr_text bold>Next</Fr_text>
+              </Bg_view>
+            </View>
+          </TouchableNativeFeedback>
+        ) : (
+          <Bg_view
+            style={{
+              position: 'absolute',
+              bottom: hp(5),
+              right: wp(10),
+              height: wp(15),
+              width: wp(15),
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: wp(15),
+            }}>
+            <View style={{flex: 1}}>
+              <TouchableNativeFeedback
+                onPress={() => navigation.navigate('subscribe')}
+                style={{flex: 1}}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    component={
+                      <Feather
+                        name="arrow-right"
+                        size={wp(10)}
+                        color="#52AE27"
+                      />
+                    }
+                  />
+                </View>
+              </TouchableNativeFeedback>
+            </View>
+          </Bg_view>
+        )}
       </Bg_view>
     );
   }

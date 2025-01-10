@@ -57,13 +57,7 @@ class Auth_stack_entry extends React.Component {
           animationEnabled: true,
         }}>
         <Auth_stack.Screen name="onboarding" component={Onboarding} />
-        <Auth_stack.Screen name="entry" component={Entry} />
-        <Auth_stack.Screen name="login" component={Login} />
-        <Auth_stack.Screen name="verify_otp" component={Verify_otp} />
-        <Auth_stack.Screen name="reset_password" component={Reset_password} />
-        <Auth_stack.Screen name="confirm_otp" component={Confirm_otp} />
-        <Auth_stack.Screen name="update_password" component={Update_password} />
-        <Auth_stack.Screen name="signup" component={Signup} />
+        <Auth_stack.Screen name="subscribe" component={Subscribe} />
       </Auth_stack.Navigator>
     );
   };
@@ -156,9 +150,9 @@ class Battron extends React.Component {
     let start = Date.now();
 
     let user = await AsyncStorage.getItem('user');
-    if (user) user = await get_request(`user/${user}`);
+    if (user) user = await get_request(`user?email=${user}`);
 
-    this.setState({user});
+    this.setState({user, loading: false});
 
     let diff = Date.now() - start;
     let wait = 3000 - diff;
@@ -167,22 +161,6 @@ class Battron extends React.Component {
     setTimeout(() => {
       this.setState({loading: false});
     }, wait);
-
-    this.login = user => {
-      AsyncStorage.setItem('inactive', 'true').then(() => {
-        this.setState({user});
-        AsyncStorage.setItem('user', user._id);
-      });
-    };
-    this.logout = () => {
-      this.setState({user: null}, () => AsyncStorage.removeItem('user'));
-    };
-    this.update_user = user => {
-      this.setState({user});
-    };
-    emitter.listen('login', this.login);
-    emitter.listen('logout', this.logout);
-    emitter.listen('update_user', this.update_user);
 
     try {
       await this.requestNotificationPermission();

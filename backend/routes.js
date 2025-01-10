@@ -11,7 +11,7 @@ import {
 } from './handlers/users';
 
 const router = app => {
-  app.get('/user/:user_id', user);
+  app.get('/user', user);
 
   app.post('/signup', signup);
   app.post('/login', login);
