@@ -4,7 +4,8 @@ import Header from '../components/header';
 import {hp, wp} from '../utils/dimensions';
 import Fr_text from '../components/fr_text';
 import Icon from '../components/icon';
-import {ScrollView} from 'react-native';
+import {ScrollView, View, TouchableWithoutFeedback} from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
 
 class About_us extends React.Component {
   constructor(props) {
@@ -18,13 +19,27 @@ class About_us extends React.Component {
 
     return (
       <Bg_view flex style={{padding: wp(5), paddingBottom: 0}}>
-        <Header title="about us" navigation={navigation} />
-
         <ScrollView showsVerticalScrollIndicator={false}>
           <Bg_view style={{paddingBottom: hp(10)}}>
-            <Fr_text bold size={wp(6)} style={{marginTop: hp(2.5)}}>
-              About us
-            </Fr_text>
+            <TouchableWithoutFeedback onPress={navigation.goBack}>
+              <View>
+                <Bg_view
+                  horizontal
+                  style={{alignItems: 'center', marginTop: hp(2.5)}}>
+                  <Feather
+                    name="chevron-left"
+                    color="#000"
+                    style={{marginHorizontal: wp(4), marginLeft: wp(2.8)}}
+                    size={wp(6.5)}
+                  />
+
+                  <Fr_text bold size={wp(6)}>
+                    About us
+                  </Fr_text>
+                </Bg_view>
+              </View>
+            </TouchableWithoutFeedback>
+
             <Bg_view style={{alignItems: 'center'}}>
               <Icon
                 icon={require('../assets/icons/logo_battron.png')}

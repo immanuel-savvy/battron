@@ -26,24 +26,23 @@ class Header extends React.Component {
           style={{
             justifyContent: 'space-between',
             borderBottomColor: '#ccc',
-            borderBottomWidth: title === 'home' ? 0 : 1,
-            paddingBottom: hp(2),
+            paddingVertical: hp(2),
             ...style,
           }}
           horizontal>
-          {title !== 'home' ? (
-            <TouchableNativeFeedback onPress={null}>
-              <Bg_view />
-              {/* <Feather name="chevron-left" color="#000" size={wp(6.5)} /> */}
-            </TouchableNativeFeedback>
-          ) : null}
+          <TouchableNativeFeedback onPress={navigation.goBack}>
+            <Feather
+              name="chevron-left"
+              color="#000"
+              style={{marginLeft: wp(4)}}
+              size={wp(6.5)}
+            />
+          </TouchableNativeFeedback>
           <Fr_text
             bold="900"
             size={wp(5)}
-            color={title === 'home' ? '#fff' : null}
-            capitalise>
-            {title === 'home' ? 'Welcome' : title}
-          </Fr_text>
+            color={title === 'home' ? '#000' : null}
+            capitalise></Fr_text>
           <TouchableNativeFeedback onPress={null}>
             <Bg_view />
             {/* <Feather name="menu" color="#000" size={wp(7.5)} /> */}

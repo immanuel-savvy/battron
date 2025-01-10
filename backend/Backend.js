@@ -30,7 +30,7 @@ app.post('/flutterwave_hook', (req, res) => {
   }
   let {customer, amount, paymentPlan: payment_plan, status} = data;
   if (status === 'successful') {
-    let type = pricing[amount];
+    let type = amount > 10000 ? 'annually' : 'monthly';
 
     let resp = SUBSCRIPTIONS.write({
       amount,
@@ -39,7 +39,7 @@ app.post('/flutterwave_hook', (req, res) => {
       type,
       payment_plan,
     });
-    USER_PAYMENTS.write({user: customer.email, payment: resp});
+    USER_PAYMENTS.write({user: customer.email, payment: resp._id});
   }
   res.end();
 });

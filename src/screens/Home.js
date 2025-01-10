@@ -20,6 +20,7 @@ import BackgroundActions from 'react-native-background-actions';
 import Cool_modal from '../components/cool_modal';
 import {emitter} from '../../Battron';
 import Sound from 'react-native-sound';
+import Base_crumbs from '../components/base_crumbs';
 
 class Home extends React.Component {
   constructor(props) {
@@ -137,12 +138,8 @@ class Home extends React.Component {
   };
 
   componentDidMount = async () => {
-    setTimeout(() => {
-      if (this.user.first || !this.user.subscription) {
-        this.props.navigation.navigate('subscribe');
-      }
-    }, 10);
-
+    let has_free = await AsyncStorage.getItem('virgin');
+    !has_free && (await AsyncStorage.setItem('virgin', Date.now().toString()));
     await this.start();
   };
 
@@ -225,6 +222,7 @@ class Home extends React.Component {
   maxs = [80, 90, 100];
 
   render() {
+    let {navigation} = this.props;
     let {
       preset_battery_level,
       deactivated,
@@ -498,6 +496,8 @@ class Home extends React.Component {
                     })}
                   </Bg_view>
                 </Bg_view>
+
+                <Base_crumbs navigation={navigation} />
               </ScrollView>
 
               <Cool_modal

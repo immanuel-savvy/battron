@@ -1,4 +1,4 @@
-import {USERS, USERS_HASH, USER_PAYMENTS} from '../ds/conn';
+import {USERS, USERS_HASH, USER_PAYMENTS, SUBSCRIPTIONS} from '../ds/conn';
 import nodemailer from 'nodemailer';
 import {generate_random_string} from 'generalised-datastore/utils/functions';
 import {verification} from './emails';
@@ -168,7 +168,24 @@ const user = (req, res) => {
   console.log(query);
 
   let payment = USER_PAYMENTS.read({user: query.email});
-  res.json({ok: true, message: 'user fetched', data: payment.slice(-1)[0]});
+  console.log(payment);
+  payment = payment.sort((p1, p2) => p1.created - p2.created).slice(-1)[0];
+
+  if (payment) {
+    payment = payment.payment._id
+      ? payment.payment
+      : SUBSCRIPTIONS.readone(payment.payment);
+    if (payment.type === 'monthly') {
+      if (payment.created + 30 * 1000 * 24 * 60 * 60 < Date.now()) {
+        payment = query.include_epxired ? payment : null;
+      }
+    } else if (payment.type === 'annually') {
+      if (payment.created + 30 * 1000 * 365 * 60 * 60 < Date.now()) {
+        payment = query.include_epxired ? payment : null;
+      }
+    }
+  }
+  res.json({ok: true, message: 'user fetched', data: payment});
 };
 
 const verify_email = (req, res) => {

@@ -21,6 +21,7 @@ import Cool_modal from '../components/cool_modal';
 import Small_btn from '../components/small_btn';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Base_crumbs from '../components/base_crumbs';
 
 let secret = 'FLWSECK_TEST-781a0514728e254396ec1c3a924d02f4-X';
 
@@ -31,13 +32,22 @@ class Subscribe extends React.Component {
     this.state = {
       sub_type: 'monthly',
       has_free: 'checking',
+      email: '',
     };
   }
 
   componentDidMount = async () => {
     let has_free = await AsyncStorage.getItem('virgin');
-
+    if (has_free) {
+      if (Number(has_free) + 3 * 1000 * 60 * 60 * 24 > Date.now())
+        has_free = false;
+    }
     this.setState({has_free: !has_free});
+
+    let user = await AsyncStorage.getItem('user');
+    console.log(user);
+    user = user && (await get_request(`user?email=${user}`));
+    this.setState({user: {subscription: user}});
   };
 
   trial_period = 3 * 24 * 3600 * 1000;
@@ -102,16 +112,22 @@ class Subscribe extends React.Component {
   toggle_email_field = () =>
     this.setState({email_field: !this.state.email_field});
 
-  proceed = async () => {
+  proceed_email = async () => {
     let {email, retrieve_loading} = this.state;
 
     if (retrieve_loading) return;
     this.setState({retrieve_loading: true});
-    await AsyncStorage.setItem('user', email.toLowerCase().trim());
-    let user = await get_request(`user?email=${user}`);
+    email = email.toLowerCase().trim();
+    await AsyncStorage.setItem('user', email);
+    let user = await get_request(`user?email=${email}`);
 
-    this.setState({email: false, retrieve_loading: false}, () =>
-      emitter.emit('home', user),
+    this.setState(
+      {
+        email: '',
+        message: user?._id ? '' : user || 'User not found',
+        retrieve_loading: false,
+      },
+      () => user && emitter.emit('home', user),
     );
   };
 
@@ -122,6 +138,7 @@ class Subscribe extends React.Component {
       email_field,
       email,
       retrieve_loading,
+      message,
       loading,
       has_free,
       user,
@@ -231,7 +248,9 @@ class Subscribe extends React.Component {
                       placeholderTextColor="#ccc"
                       value={email}
                       autoFocus
-                      onChangeText={email => this.setState({email})}
+                      onChangeText={email =>
+                        this.setState({email, message: ''})
+                      }
                       style={{
                         borderRadius: wp(2.8),
                         borderColor: '#52AE27',
@@ -255,12 +274,12 @@ class Subscribe extends React.Component {
                           <ActivityIndicator color="#fff" />
                         ) : (
                           <Text_btn
-                            text="Proceed"
+                            text={message || 'Proceed'}
                             bold
                             color="#fff"
                             centralise
                             size={wp(4.5)}
-                            action={this.proceed}
+                            action={this.proceed_email}
                           />
                         )}
                       </Bg_view>
@@ -276,9 +295,14 @@ class Subscribe extends React.Component {
               </Bg_view>
 
               {user?.subscription ? (
-                <Bg_view no_bg style={{alignSelf: 'center', marginTop: hp(4)}}>
+                <Bg_view no_bg style={{alignSelf: 'center'}}>
                   <TouchableNativeFeedback
-                    onPress={() => this.setState({sub_type: 'monthly'})}>
+                    onPress={() => {
+                      if (user.subscription) {
+                        this.toggle_cancel();
+                      }
+                      this.setState({sub_type: 'monthly'});
+                    }}>
                     <View style={{}}>
                       <Bg_view
                         style={{
@@ -543,14 +567,17 @@ class Subscribe extends React.Component {
                     action={this.toggle_cancel}
                   />
                 </Bg_view>
-              ) : has_free && has_free !== 'checking' ? (
-                <TouchableWithoutFeedback onPress={() => emitter.emit('home')}>
+              ) : has_free && has_free !== 'checking' && !user.subscription ? (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    console.log('uh');
+                    emitter.emit('home');
+                  }}>
                   <View>
                     <Bg_view
                       no_bg
                       style={{
                         borderRadius: wp(5),
-                        // backgroundColor: '#fff',
                         marginTop: hp(2.8),
                         alignSelf: 'center',
                         paddingVertical: hp(1.4),
@@ -592,14 +619,8 @@ class Subscribe extends React.Component {
                 data loss resulting from its use; by subscribing, you agree to
                 these terms as outlined in the Terms of Service.
               </Fr_text>
-              <Bg_view no_bg style={{alignItems: 'center'}}>
-                <Text_btn
-                  color="#fff"
-                  italic
-                  bold
-                  text="Privacy Policy   /   Terms & Conditions"
-                />
-              </Bg_view>
+
+              <Base_crumbs navigation={navigation} />
             </Bg_view>
           </ScrollView>
         </ImageBackground>

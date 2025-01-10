@@ -30,6 +30,9 @@ import Entry from './src/screens/Entry';
 import Reset_password from './src/screens/Reset_password';
 import Confirm_otp from './src/screens/Confirm_otp';
 import Update_password from './src/screens/Update_password';
+import Battery_tips from './src/screens/Battery_tips';
+import Report_bug from './src/screens/report_bug';
+import Leave_review from './src/screens/leave_review';
 
 const emitter = new Emitter();
 
@@ -47,9 +50,11 @@ class Auth_stack_entry extends React.Component {
   }
 
   render = () => {
+    let {has_free} = this.props;
+
     return (
       <Auth_stack.Navigator
-        initialRouteName="onboarding"
+        initialRouteName={has_free ? 'subscribe' : 'onboarding'}
         screenOptions={{
           headerShown: false,
           keyboardHandlingEnabled: true,
@@ -81,6 +86,9 @@ class App_stack_entry extends React.Component {
           animationEnabled: true,
         }}>
         <App_stack.Screen name="home" component={Home} />
+        <App_stack.Screen name="about_us" component={About_us} />
+        <App_stack.Screen name="report_bug" component={Report_bug} />
+        <App_stack.Screen name="leave_review" component={Leave_review} />
       </App_stack.Navigator>
     );
   };
@@ -115,12 +123,12 @@ class Bottom_tabs_entry extends React.Component {
           }}
         />
         <Bottom_tabs.Screen
-          name="about"
-          component={About_us}
+          name="battery_tips"
+          component={Battery_tips}
           options={{
-            tabBarLabel: 'About us',
+            tabBarLabel: 'Battery Tips',
             tabBarIcon: ({color, size}) => (
-              <Feather name="user" color={color} size={size} />
+              <Feather name="battery" color={color} size={size} />
             ),
           }}
         />
@@ -152,7 +160,13 @@ class Battron extends React.Component {
     let user = await AsyncStorage.getItem('user');
     if (user) user = await get_request(`user?email=${user}`);
 
-    this.setState({user, loading: false});
+    let has_free = await AsyncStorage.getItem('virgin');
+
+    this.setState({user, loading: false, has_free});
+
+    emitter.listen('home', user => {
+      this.setState({user: user || {_id: 'free'}});
+    });
 
     let diff = Date.now() - start;
     let wait = 3000 - diff;
@@ -253,7 +267,7 @@ class Battron extends React.Component {
   };
 
   render = () => {
-    let {loading, user} = this.state;
+    let {loading, user, has_free} = this.state;
 
     return (
       <NavigationContainer>
@@ -263,7 +277,11 @@ class Battron extends React.Component {
           ) : (
             <App_data.Provider value={{user}}>
               <SafeAreaView style={{flex: 1}}>
-                {user?._id ? <Bottom_tabs_entry /> : <Auth_stack_entry />}
+                {user?._id ? (
+                  <Bottom_tabs_entry />
+                ) : (
+                  <Auth_stack_entry has_free={has_free} />
+                )}
               </SafeAreaView>
             </App_data.Provider>
           )}
