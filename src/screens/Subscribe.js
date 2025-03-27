@@ -45,7 +45,6 @@ class Subscribe extends React.Component {
     this.setState({has_free: !has_free});
 
     let user = await AsyncStorage.getItem('user');
-    console.log(user);
     user = user && (await get_request(`user?email=${user}`));
     this.setState({user: {subscription: user}});
   };
@@ -98,8 +97,8 @@ class Subscribe extends React.Component {
 
     Linking.openURL(
       sub_type === 'monthly'
-        ? 'https://sandbox.flutterwave.com/pay/2k4xmt1nqgfe'
-        : 'https://sandbox.flutterwave.com/pay/roccasmtau6x',
+        ? 'https://flutterwave.com/pay/iv6pmvirk9p7'
+        : 'https://flutterwave.com/pay/m5ownjxcanfk',
     );
   };
 
@@ -220,7 +219,298 @@ class Subscribe extends React.Component {
                 )}
               </Bg_view>
 
-              <Bg_view no_bg style={{marginVertical: hp(1.4)}}>
+              {user?.subscription ? (
+                <Bg_view no_bg style={{alignSelf: 'center'}}>
+                  <TouchableNativeFeedback
+                    onPress={() => {
+                      if (user.subscription) {
+                        this.toggle_cancel();
+                      }
+                      this.setState({sub_type: 'monthly'});
+                    }}>
+                    <View style={{}}>
+                      <Bg_view
+                        style={{
+                          backgroundColor:
+                            sub_type === 'monthly'
+                              ? '#52AE27'
+                              : 'rgba(0,0,0,0)',
+                          borderWidth: 2,
+                          borderColor:
+                            sub_type !== 'monthly'
+                              ? '#52AE27'
+                              : 'rgba(0,0,0,0)',
+                          paddingVertical: hp(4),
+                          borderRadius: wp(4.5),
+                          width: wp(42),
+                          paddingHorizontal: wp(2.8),
+                          minHeight: hp(38),
+                        }}>
+                        <Fr_text style={{fontSize: wp(5)}} bold color="#fff">
+                          Monthly
+                        </Fr_text>
+                        <LinearGradient
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}
+                          colors={['yellow', '#D12E34']}
+                          style={{
+                            backgroundColor: 'yellow',
+                            borderRadius: wp(2.8),
+                            paddingHorizontal: wp(2.8),
+                            alignSelf: 'flex-start',
+                          }}>
+                          <Fr_text
+                            size={wp(3.5)}
+                            style={{textTransform: 'uppercase'}}>
+                            Running
+                          </Fr_text>
+                        </LinearGradient>
+
+                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            Till:{' '}
+                            {`${new Date(
+                              user.subscription.updated +
+                                (user.subscription.amount < 8000
+                                  ? this.monthly_period
+                                  : this.annual_period),
+                            ).toDateString()}`}
+                          </Fr_text>
+                        </Bg_view>
+                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                          <Fr_text color="#fff">
+                            <Fr_text color="#fff" size={wp(6)} bold>
+                              $2.99
+                            </Fr_text>
+                          </Fr_text>
+                        </Bg_view>
+
+                        <Bg_view no_bg style={{marginTop: hp(3)}}>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            * Date:{' '}
+                            {new Date(user.subscription.updated).toDateString()}
+                          </Fr_text>
+                        </Bg_view>
+                      </Bg_view>
+                    </View>
+                  </TouchableNativeFeedback>
+                </Bg_view>
+              ) : (
+                <Bg_view
+                  no_bg
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: hp(4),
+                  }}>
+                  <TouchableNativeFeedback
+                    onPress={() =>
+                      this.setState({sub_type: 'monthly'}, this.proceed)
+                    }>
+                    <View style={{}}>
+                      <Bg_view
+                        style={{
+                          backgroundColor:
+                            sub_type === 'monthly'
+                              ? '#52AE27'
+                              : 'rgba(0,0,0,0)',
+                          borderWidth: 2,
+                          borderColor:
+                            sub_type !== 'monthly'
+                              ? '#52AE27'
+                              : 'rgba(0,0,0,0)',
+                          paddingVertical: hp(4),
+                          borderRadius: wp(4.5),
+                          width: wp(42),
+                          paddingHorizontal: wp(2.8),
+                          minHeight: hp(38),
+                        }}>
+                        <Fr_text style={{fontSize: wp(5)}} bold color="#fff">
+                          Monthly
+                        </Fr_text>
+                        <LinearGradient
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}
+                          colors={['yellow', '#D12E34']}
+                          style={{
+                            backgroundColor: 'yellow',
+                            borderRadius: wp(2.8),
+                            paddingHorizontal: wp(2.8),
+                            alignSelf: 'flex-start',
+                          }}>
+                          <Fr_text
+                            size={wp(3.5)}
+                            style={{textTransform: 'uppercase'}}>
+                            most popular
+                          </Fr_text>
+                        </LinearGradient>
+
+                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            <Fr_text color="#fff" size={wp(4)} bold>
+                              $0.74
+                            </Fr_text>{' '}
+                            / Week
+                          </Fr_text>
+                        </Bg_view>
+                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                          <Fr_text color="#fff">
+                            <Fr_text color="#fff" size={wp(6)} bold>
+                              $2.99
+                            </Fr_text>{' '}
+                            / Month
+                          </Fr_text>
+                        </Bg_view>
+
+                        <Bg_view no_bg style={{marginTop: hp(3)}}>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            * Included{' '}
+                            <Fr_text bold color="#fff" size={wp(3.5)}>
+                              3-days
+                            </Fr_text>{' '}
+                            trial
+                          </Fr_text>
+                        </Bg_view>
+                      </Bg_view>
+                    </View>
+                  </TouchableNativeFeedback>
+                  <TouchableNativeFeedback
+                    onPress={() =>
+                      this.setState({sub_type: 'annual'}, this.proceed)
+                    }>
+                    <View ref={vref => (this.v_ref = vref)} style={{}}>
+                      <Bg_view
+                        style={{
+                          backgroundColor:
+                            sub_type !== 'monthly'
+                              ? '#52AE27'
+                              : 'rgba(0,0,0,0)',
+                          borderWidth: 2,
+                          borderColor:
+                            sub_type === 'monthly'
+                              ? '#52AE27'
+                              : 'rgba(0,0,0,0)',
+                          paddingVertical: hp(4),
+                          borderRadius: wp(4.5),
+                          width: wp(42),
+                          paddingHorizontal: wp(2.8),
+                          minHeight: hp(38),
+                        }}>
+                        <Fr_text style={{fontSize: wp(5)}} bold color="#fff">
+                          Yearly
+                        </Fr_text>
+                        <LinearGradient
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}
+                          colors={['yellow', '#D12E34']}
+                          style={{
+                            backgroundColor: 'yellow',
+                            borderRadius: wp(2.8),
+                            paddingHorizontal: wp(2.8),
+                            alignSelf: 'flex-start',
+                          }}>
+                          <Fr_text
+                            size={wp(3.5)}
+                            style={{textTransform: 'uppercase'}}>
+                            Best Value
+                          </Fr_text>
+                        </LinearGradient>
+
+                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            <Fr_text
+                              style={{textDecorationLine: 'line-through'}}
+                              color="#fff"
+                              size={wp(4)}
+                              bold>
+                              $35.88
+                            </Fr_text>{' '}
+                          </Fr_text>
+                        </Bg_view>
+                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
+                          <Fr_text color="#fff">
+                            <Fr_text color="#fff" size={wp(6)} bold>
+                              $5.99
+                            </Fr_text>{' '}
+                            / Annum
+                          </Fr_text>
+                        </Bg_view>
+
+                        <Bg_view no_bg style={{marginTop: hp(3)}}>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            * Save{' '}
+                            <Fr_text bold color="#fff" size={wp(3.5)}>
+                              80%
+                            </Fr_text>{' '}
+                          </Fr_text>
+                          <Fr_text color="#fff" size={wp(3.5)}>
+                            * Included{' '}
+                            <Fr_text bold color="#fff" size={wp(3.5)}>
+                              3-days
+                            </Fr_text>{' '}
+                            trial
+                          </Fr_text>
+                        </Bg_view>
+                      </Bg_view>
+                    </View>
+                  </TouchableNativeFeedback>
+                </Bg_view>
+              )}
+
+              {user.payment ? (
+                <Bg_view style={{alignItems: 'center'}} no_bg>
+                  <Text_btn
+                    style={{
+                      marginVertical: hp(4),
+                      textAlign: 'center',
+                      color: '#fff',
+                    }}
+                    color="#fff"
+                    centralise
+                    text="Cancel anytime"
+                    action={this.toggle_cancel}
+                  />
+                </Bg_view>
+              ) : has_free && has_free !== 'checking' && !user.subscription ? (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    emitter.emit('home');
+                  }}>
+                  <View>
+                    <Bg_view
+                      no_bg
+                      style={{
+                        borderRadius: wp(5),
+                        marginTop: hp(2.8),
+                        alignSelf: 'center',
+                        paddingVertical: hp(1.4),
+                        paddingHorizontal: wp(4),
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Fr_text
+                        bold
+                        style={{
+                          textDecorationLine: 'underline',
+                          fontSize: wp(4.5),
+                          color: '#fff',
+                          fontWeight: 'bold',
+                        }}>
+                        Continue Free-Trial
+                      </Fr_text>
+                    </Bg_view>
+                  </View>
+                </TouchableWithoutFeedback>
+              ) : null}
+
+              <Bg_view no_bg style={{marginVertical: hp(2.8)}}>
+                <Fr_text bold color="#fff" centralise>
+                  OR
+                </Fr_text>
+              </Bg_view>
+              <Bg_view
+                no_bg
+                style={{marginVertical: hp(1.4), marginBottom: hp(4)}}>
                 <Bg_view
                   no_bg={email_field}
                   style={
@@ -286,339 +576,7 @@ class Subscribe extends React.Component {
                     ) : null}
                   </>
                 ) : null}
-
-                <Bg_view no_bg style={{marginVertical: hp(2.8)}}>
-                  <Fr_text bold color="#fff" centralise>
-                    OR
-                  </Fr_text>
-                </Bg_view>
               </Bg_view>
-
-              {user?.subscription ? (
-                <Bg_view no_bg style={{alignSelf: 'center'}}>
-                  <TouchableNativeFeedback
-                    onPress={() => {
-                      if (user.subscription) {
-                        this.toggle_cancel();
-                      }
-                      this.setState({sub_type: 'monthly'});
-                    }}>
-                    <View style={{}}>
-                      <Bg_view
-                        style={{
-                          backgroundColor:
-                            sub_type === 'monthly'
-                              ? '#52AE27'
-                              : 'rgba(0,0,0,0)',
-                          borderWidth: 2,
-                          borderColor:
-                            sub_type !== 'monthly'
-                              ? '#52AE27'
-                              : 'rgba(0,0,0,0)',
-                          paddingVertical: hp(4),
-                          borderRadius: wp(4.5),
-                          width: wp(42),
-                          paddingHorizontal: wp(2.8),
-                          minHeight: hp(38),
-                        }}>
-                        <Fr_text style={{fontSize: wp(5)}} bold color="#fff">
-                          Monthly
-                        </Fr_text>
-                        <LinearGradient
-                          start={{x: 0, y: 0}}
-                          end={{x: 1, y: 0}}
-                          colors={['yellow', '#D12E34']}
-                          style={{
-                            backgroundColor: 'yellow',
-                            borderRadius: wp(2.8),
-                            paddingHorizontal: wp(2.8),
-                            alignSelf: 'flex-start',
-                          }}>
-                          <Fr_text
-                            size={wp(3.5)}
-                            style={{textTransform: 'uppercase'}}>
-                            Running
-                          </Fr_text>
-                        </LinearGradient>
-
-                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            Till:{' '}
-                            {`${new Date(
-                              user.subscription.updated +
-                                (user.subscription.amount < 8000
-                                  ? this.monthly_period
-                                  : this.annual_period),
-                            ).toDateString()}`}
-                          </Fr_text>
-                        </Bg_view>
-                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
-                          <Fr_text color="#fff">
-                            <Fr_text color="#fff" size={wp(6)} bold>
-                              $3.99
-                            </Fr_text>
-                          </Fr_text>
-                        </Bg_view>
-
-                        <Bg_view no_bg style={{marginTop: hp(3)}}>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            * Date:{' '}
-                            {new Date(user.subscription.updated).toDateString()}
-                          </Fr_text>
-                        </Bg_view>
-                      </Bg_view>
-                    </View>
-                  </TouchableNativeFeedback>
-                </Bg_view>
-              ) : (
-                <Bg_view
-                  no_bg
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: hp(4),
-                  }}>
-                  <TouchableNativeFeedback
-                    onPress={() => this.setState({sub_type: 'monthly'})}>
-                    <View style={{}}>
-                      <Bg_view
-                        style={{
-                          backgroundColor:
-                            sub_type === 'monthly'
-                              ? '#52AE27'
-                              : 'rgba(0,0,0,0)',
-                          borderWidth: 2,
-                          borderColor:
-                            sub_type !== 'monthly'
-                              ? '#52AE27'
-                              : 'rgba(0,0,0,0)',
-                          paddingVertical: hp(4),
-                          borderRadius: wp(4.5),
-                          width: wp(42),
-                          paddingHorizontal: wp(2.8),
-                          minHeight: hp(38),
-                        }}>
-                        <Fr_text style={{fontSize: wp(5)}} bold color="#fff">
-                          Monthly
-                        </Fr_text>
-                        <LinearGradient
-                          start={{x: 0, y: 0}}
-                          end={{x: 1, y: 0}}
-                          colors={['yellow', '#D12E34']}
-                          style={{
-                            backgroundColor: 'yellow',
-                            borderRadius: wp(2.8),
-                            paddingHorizontal: wp(2.8),
-                            alignSelf: 'flex-start',
-                          }}>
-                          <Fr_text
-                            size={wp(3.5)}
-                            style={{textTransform: 'uppercase'}}>
-                            most popular
-                          </Fr_text>
-                        </LinearGradient>
-
-                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            <Fr_text color="#fff" size={wp(4)} bold>
-                              $0.99
-                            </Fr_text>{' '}
-                            / Week
-                          </Fr_text>
-                        </Bg_view>
-                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
-                          <Fr_text color="#fff">
-                            <Fr_text color="#fff" size={wp(6)} bold>
-                              $3.99
-                            </Fr_text>{' '}
-                            / Month
-                          </Fr_text>
-                        </Bg_view>
-
-                        <Bg_view no_bg style={{marginTop: hp(3)}}>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            * Included{' '}
-                            <Fr_text bold color="#fff" size={wp(3.5)}>
-                              3-days
-                            </Fr_text>{' '}
-                            trial
-                          </Fr_text>
-                        </Bg_view>
-                      </Bg_view>
-                    </View>
-                  </TouchableNativeFeedback>
-                  <TouchableNativeFeedback
-                    onPress={() => this.setState({sub_type: 'annual'})}>
-                    <View ref={vref => (this.v_ref = vref)} style={{}}>
-                      <Bg_view
-                        style={{
-                          backgroundColor:
-                            sub_type !== 'monthly'
-                              ? '#52AE27'
-                              : 'rgba(0,0,0,0)',
-                          borderWidth: 2,
-                          borderColor:
-                            sub_type === 'monthly'
-                              ? '#52AE27'
-                              : 'rgba(0,0,0,0)',
-                          paddingVertical: hp(4),
-                          borderRadius: wp(4.5),
-                          width: wp(42),
-                          paddingHorizontal: wp(2.8),
-                          minHeight: hp(38),
-                        }}>
-                        <Fr_text style={{fontSize: wp(5)}} bold color="#fff">
-                          Yearly
-                        </Fr_text>
-                        <LinearGradient
-                          start={{x: 0, y: 0}}
-                          end={{x: 1, y: 0}}
-                          colors={['yellow', '#D12E34']}
-                          style={{
-                            backgroundColor: 'yellow',
-                            borderRadius: wp(2.8),
-                            paddingHorizontal: wp(2.8),
-                            alignSelf: 'flex-start',
-                          }}>
-                          <Fr_text
-                            size={wp(3.5)}
-                            style={{textTransform: 'uppercase'}}>
-                            Best Value
-                          </Fr_text>
-                        </LinearGradient>
-
-                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            <Fr_text color="#fff" size={wp(4)} bold>
-                              $2.99
-                            </Fr_text>{' '}
-                            / Month
-                          </Fr_text>
-                        </Bg_view>
-                        <Bg_view no_bg style={{marginTop: hp(2.8)}}>
-                          <Fr_text color="#fff">
-                            <Fr_text color="#fff" size={wp(6)} bold>
-                              $35.88
-                            </Fr_text>{' '}
-                            / Annum
-                          </Fr_text>
-                        </Bg_view>
-
-                        <Bg_view no_bg style={{marginTop: hp(3)}}>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            * Save{' '}
-                            <Fr_text bold color="#fff" size={wp(3.5)}>
-                              50%
-                            </Fr_text>{' '}
-                          </Fr_text>
-                          <Fr_text color="#fff" size={wp(3.5)}>
-                            * Included{' '}
-                            <Fr_text bold color="#fff" size={wp(3.5)}>
-                              3-days
-                            </Fr_text>{' '}
-                            trial
-                          </Fr_text>
-                        </Bg_view>
-                      </Bg_view>
-                    </View>
-                  </TouchableNativeFeedback>
-                </Bg_view>
-              )}
-
-              {!user?.subscription ? (
-                <TouchableNativeFeedback onPress={this.proceed}>
-                  <View>
-                    <Bg_view
-                      style={{
-                        borderRadius: wp(5),
-                        backgroundColor: '#52AE27',
-                        height: hp(7.5),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      {loading ? (
-                        <ActivityIndicator color="#fff" size="small" />
-                      ) : (
-                        <Fr_text
-                          style={{
-                            fontSize: wp(4.5),
-                            color: '#fff',
-                            fontWeight: 'bold',
-                          }}>
-                          Continue
-                        </Fr_text>
-                      )}
-                    </Bg_view>
-                  </View>
-                </TouchableNativeFeedback>
-              ) : null}
-
-              {user.payment ? (
-                <Bg_view style={{alignItems: 'center'}} no_bg>
-                  <Text_btn
-                    style={{
-                      marginVertical: hp(4),
-                      textAlign: 'center',
-                      color: '#fff',
-                    }}
-                    color="#fff"
-                    centralise
-                    text="Cancel anytime"
-                    action={this.toggle_cancel}
-                  />
-                </Bg_view>
-              ) : has_free && has_free !== 'checking' && !user.subscription ? (
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    console.log('uh');
-                    emitter.emit('home');
-                  }}>
-                  <View>
-                    <Bg_view
-                      no_bg
-                      style={{
-                        borderRadius: wp(5),
-                        marginTop: hp(2.8),
-                        alignSelf: 'center',
-                        paddingVertical: hp(1.4),
-                        paddingHorizontal: wp(4),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Fr_text
-                        bold
-                        style={{
-                          textDecorationLine: 'underline',
-                          fontSize: wp(4.5),
-                          color: '#fff',
-                          fontWeight: 'bold',
-                        }}>
-                        Continue Free-Trial
-                      </Fr_text>
-                    </Bg_view>
-                  </View>
-                </TouchableWithoutFeedback>
-              ) : null}
-
-              <Fr_text
-                color="#fff"
-                style={{
-                  marginVertical: hp(4),
-                  fontSize: wp(3.5),
-                  lineHeight: wp(5),
-                  textAlign: 'justify',
-                }}>
-                The subscription feature of the Battery Monitor App provides
-                access to advanced tools, detailed analytics, and premium
-                support, but its availability may be subject to updates or
-                technical issues, the accuracy of data depends on device
-                hardware and software, subscriptions can be canceled anytime
-                with refunds governed by the app’s policy, features may be
-                modified or discontinued with prior notice, and the app’s
-                developers are not liable for any damages, device issues, or
-                data loss resulting from its use; by subscribing, you agree to
-                these terms as outlined in the Terms of Service.
-              </Fr_text>
 
               <Base_crumbs navigation={navigation} />
             </Bg_view>

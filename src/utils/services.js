@@ -1,4 +1,4 @@
-let DEV = false;
+let DEV = true;
 let PRD = !DEV;
 
 let domain = `${

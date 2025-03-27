@@ -38,12 +38,12 @@ class Onboarding extends React.Component {
     this.setState({activePage: pageIndex});
   };
 
-  renderPaginationDots = () => {
+  render_pagination_dots = () => {
     let pages = 4;
     let {activePage} = this.state;
 
     return (
-      <View style={styles.dotsContainer}>
+      <View style={styles.dots_container}>
         {Array.from({length: pages}).map((_, index) => (
           <View
             key={index}
@@ -94,102 +94,56 @@ class Onboarding extends React.Component {
           scrollEventThrottle={16}
           onScroll={this.onScroll}
           showsHorizontalScrollIndicator={false}>
-          <View style={{height: hp(), width: wp()}}>
-            <Image
-              style={{width: '100%', height: '100%'}}
-              source={require('../assets/images/onboard1.png')}
-              resizeMode="cover"
-            />
-          </View>
-          <View style={{height: hp(), width: wp()}}>
-            <Image
-              style={{width: '100%', height: '100%'}}
-              source={require('../assets/images/onboard2.png')}
-              resizeMode="cover"
-            />
-          </View>
-
-          <View style={{height: hp(), width: wp()}}>
-            <Image
-              style={{width: '100%', height: '100%'}}
-              source={require('../assets/images/onboard3.png')}
-              resizeMode="cover"
-            />
-          </View>
-
-          <View style={{height: hp(), width: wp()}}>
-            <Image
-              style={{width: '100%', height: '100%'}}
-              source={require('../assets/images/onboard4.png')}
-              resizeMode="cover"
-            />
-          </View>
+          {[
+            require('../assets/images/onboard1.png'),
+            require('../assets/images/onboard2.png'),
+            require('../assets/images/onboard3.png'),
+            require('../assets/images/onboard4.png'),
+          ].map(img => {
+            return (
+              <View style={{height: hp(), width: wp()}}>
+                <Image
+                  style={{width: '100%', height: '100%'}}
+                  source={img}
+                  resizeMode="cover"
+                />
+              </View>
+            );
+          })}
         </ScrollView>
 
-        {this.renderPaginationDots()}
+        {this.render_pagination_dots()}
 
         {activePage === totalPages - 1 ? (
           <TouchableNativeFeedback
             onPress={() => navigation.navigate('subscribe')}>
             <View>
               <Bg_view
+                shadowed
                 style={{
                   position: 'absolute',
                   bottom: hp(16),
                   right: wp(40),
-                  height: wp(12),
-                  width: wp(20),
+                  height: wp(16),
+                  width: wp(25),
                   justifyContent: 'center',
                   alignItems: 'center',
                   borderRadius: wp(4),
                 }}>
-                <Fr_text bold>Next</Fr_text>
+                <Fr_text size={wp(4.5)} bold>
+                  Next
+                </Fr_text>
               </Bg_view>
             </View>
           </TouchableNativeFeedback>
-        ) : (
-          <Bg_view
-            style={{
-              position: 'absolute',
-              bottom: hp(5),
-              right: wp(10),
-              height: wp(15),
-              width: wp(15),
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: wp(15),
-            }}>
-            <View style={{flex: 1}}>
-              <TouchableNativeFeedback
-                onPress={() => navigation.navigate('subscribe')}
-                style={{flex: 1}}>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    component={
-                      <Feather
-                        name="arrow-right"
-                        size={wp(10)}
-                        color="#52AE27"
-                      />
-                    }
-                  />
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-          </Bg_view>
-        )}
+        ) : null}
       </Bg_view>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  dotsContainer: {
+  dots_container: {
     position: 'absolute',
     bottom: hp(10),
     width: '100%',

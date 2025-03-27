@@ -66,6 +66,8 @@ class Home extends React.Component {
     eco_chime: require('../assets/sounds/echo_chime.mp3'),
     dog_barking: require('../assets/sounds/dog_barking.mp3'),
     energy_save_alert: require('../assets/sounds/energy_save.wav'),
+    power_protect_tone: require('../assets/sounds/power_protect_tone.wav'),
+    battery_guardian: require('../assets/sounds/battery_guardian.wav'),
   };
 
   send_notifications = (message, id) => {
